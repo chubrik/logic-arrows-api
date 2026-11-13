@@ -1,0 +1,31 @@
+{
+  "name": "logic-arrows-api",
+  "version": "0.1.0",
+  "description": "TypeScript declarations for the script block API of Logic Arrows",
+  "keywords": [
+    "logic-arrows",
+    "script-block",
+    "types",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "Arkadi Chubrik <arkadi@chubrik.org>",
+  "homepage": "https://github.com/chubrik/logic-arrows-api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chubrik/logic-arrows-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chubrik/logic-arrows-api/issues"
+  },
+  "types": "script-api.d.ts",
+  "exports": {
+    ".": {
+      "types": "./script-api.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "script-api.d.ts"
+  ]
+}
