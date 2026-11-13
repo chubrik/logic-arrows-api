@@ -53,6 +53,38 @@ onActive(event => {
 });
 ```
 
+## Constants
+
+The package also gives names to the numbers of the API:
+
+```js
+import { ArrowType, Rotation, Signal, Speed } from 'logic-arrows-api';
+
+game.setSpeed(Speed.TPS_60);
+
+onActive(event => {
+  world.setArrow(event.x + 1, event.y, ArrowType.ARROW, Rotation.RIGHT);
+  world.setSignal(event.x, event.y + 1, Signal.RED);
+});
+```
+
+The groups are `ArrowType`, `Brightness`, `Color`, `Instrument`, `Key`, `Letter`, `Note`, `Octave`,
+`Rotation`, `Signal` and `Speed`. The settings of an arrow are packed into its `extra` number, and
+the constants for them already stand in their places, so they are joined with `|`:
+
+```js
+import { ArrowType, Color, Instrument, Letter, Note, Octave } from 'logic-arrows-api';
+
+const { x, y } = getPosition();
+const music = Instrument.GUITAR | Octave.FIVE | Note.F_SHARP;
+world.setArrow(x + 1, y, ArrowType.MUSIC, 0, false, music);
+world.setArrow(x + 2, y, ArrowType.WALL, 0, false, Letter.A | Color.RED);
+```
+
+The game knows nothing about imports, so the constants are for those who build the code of a block
+with a bundler, like esbuild. Such an import brings the declarations of the API too, and the `types`
+setting is not needed with it.
+
 ## Reference
 
 The whole API is described in [script-api.d.ts](script-api.d.ts). You can read it right here,

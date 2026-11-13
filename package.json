@@ -1,7 +1,7 @@
 {
   "name": "logic-arrows-api",
-  "version": "0.1.0",
-  "description": "TypeScript declarations for the script block API of Logic Arrows",
+  "version": "0.2.0",
+  "description": "TypeScript declarations and constants for the script block API of Logic Arrows",
   "keywords": [
     "logic-arrows",
     "script-block",
@@ -18,14 +18,26 @@
   "bugs": {
     "url": "https://github.com/chubrik/logic-arrows-api/issues"
   },
-  "types": "script-api.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./script-api.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
   "files": [
+    "dist",
     "script-api.d.ts"
-  ]
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
 }

@@ -32,22 +32,18 @@ declare const game: {
   setKeyMode(active: boolean): void;
 
   /**
-   * Allow or forbid the player an action, by the name of the permission. Known names: setArrows,
-   * deleteArrows, deleteArrowsNotInToolbar, rotateArrows, flipArrows, selectArrows, copyArrows,
-   * pasteArrows, pickArrows, changeWalls, changeLamps, changeMusicArrows, changeLoggers,
-   * changeScriptBlocks, undo, runOneTick, rewindOneTick, pauseSimulation, changeSpeed,
-   * clearSignals, useToolbar, toggleToolbarMode, toggleKeyMode, moveCamera, zoomCamera; an unknown
-   * one throws a RangeError. A permission binds the player alone: with moveCamera or zoomCamera
-   * forbidden, the camera calls of a script still work.
+   * Allow or forbid the player an action, by the name of the permission; an unknown name throws
+   * a RangeError. A permission binds the player alone: with moveCamera or zoomCamera forbidden,
+   * the camera calls of a script still work.
    */
-  setPlayerPermission(name: string, enabled: boolean): void;
+  setPlayerPermission(name: PlayerPermission, enabled: boolean): void;
 
   /**
    * Set the tick rate, by the positions of the speed control of the game:
    * 0 = paused, 1 = 3 ticks per second, 2 = 12, 3 = 60, 4 = 300, 5 = 1200, 6 = unlimited. Any other
    * number throws a RangeError.
    */
-  setSpeed(level: number): void;
+  setSpeed(level: Speed): void;
 
   /**
    * Give the player an arrow or take it away, by its type: 1 to 43, any other number throws
@@ -57,7 +53,7 @@ declare const game: {
    * does not offer by itself, like Source, Target, Projectile and Flash. The setting survives
    * a reset of all signals (the N key), but not a reload of the map.
    */
-  setToolbarArrow(id: number, enabled: boolean): void;
+  setToolbarArrow(id: ArrowType, enabled: boolean): void;
 
   /**
    * Set the camera scale, the size of a cell in pixels, keeping the center of the screen: 2 to
@@ -69,18 +65,15 @@ declare const game: {
   zoomCamera(scale: number): Promise<void>;
 };
 
-/**
- * Script block coordinates. A placed block always has them, even before the first tick; null is
- * only a fallback of the runtime.
- */
-declare function getPosition(): Position | null;
+/** Script block coordinates; the block has them even before the first tick. */
+declare function getPosition(): Position;
 
 /**
  * Current tick count: 0 while the map loads, 1 inside the first always() call. The count restarts
  * from 1 after world.clearSignals() and after the reset of all signals by the player (the N key),
  * which also reruns the block code.
  */
-declare function getTick(): number | null;
+declare function getTick(): number;
 
 /**
  * Shared state between script blocks; it lives in memory only and is gone after a map reload or
@@ -210,24 +203,21 @@ declare const world: {
    */
   getChunks(): Position[];
 
-  /**
-   * Script block coordinates. A placed block always has them, even before the first tick; null is
-   * only a fallback of the runtime.
-   */
-  getPosition(): Position | null;
+  /** Script block coordinates; the block has them even before the first tick. */
+  getPosition(): Position;
 
   /**
    * Read a signal: 0 none, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple; null where there
    * is no arrow.
    */
-  getSignal(x: number, y: number): number | null;
+  getSignal(x: number, y: number): Signal | null;
 
   /**
    * Current tick count: 0 while the map loads, 1 inside the first always() call. The count restarts
    * from 1 after world.clearSignals() and after the reset of all signals by the player (the N key),
    * which also reruns the block code.
    */
-  getTick(): number | null;
+  getTick(): number;
 
   /**
    * Read the number an arrow shows; null for a cell that shows none. A logger (type 42) shows how
@@ -248,11 +238,8 @@ declare const world: {
    * change from the next tick on: during this tick it still returns what the cell held before.
    */
   setArrow(
-    x: number, y: number, arrowType: number, rotation?: number, flip?: boolean, extra?: number)
-    : void;
-
-  /** @deprecated Use setScriptBlockCode. */
-  setCommandBlockCode(x: number, y: number, code: string): void;
+    x: number, y: number, arrowType: ArrowType, rotation?: Rotation, flip?: boolean,
+    extra?: number): void;
 
   /**
    * Set the code of a script block, a Source or a Target; a Message does not take it. The code
@@ -267,7 +254,7 @@ declare const world: {
    * not show it on the cell itself: on the next tick it is already on the arrows that cell feeds.
    * A signal of a color that is not the arrow's own is not passed on.
    */
-  setSignal(x: number, y: number, signal: number): void;
+  setSignal(x: number, y: number, signal: Signal): void;
 
   /**
    * Spawn count particles at a cell; they fly apart in all directions and live for about a second.
@@ -293,12 +280,13 @@ declare const world: {
     }): void;
 };
 
+/** An arrow on the map, the way world.getArrow() returns it. */
 declare type Arrow = {
   /** The kind of the arrow, 1 to 43. */
-  type: number;
+  type: ArrowType;
 
   /** Where the arrow points: 0 up, 1 right, 2 down, 3 left. */
-  rotation: number;
+  rotation: Rotation;
 
   /** Whether the arrow is mirrored left to right before the rotation. */
   flip: boolean;
@@ -307,29 +295,35 @@ declare type Arrow = {
    * The signal on the arrow, the same value getSignal(x, y) returns: 0 none, 1 red, 2 blue,
    * 3 yellow, 4 green, 5 orange, 6 purple.
    */
-  signal: number;
+  signal: Signal;
 
   /**
+   * The settings of the arrow packed into one number, 0 to 65535. The arrows that have settings:
    * ```
    * Key:            00kkkkkk (key)
    * Light:          000bcccc (brightness, color)
-   * Music: 000iiiii oooonnnn (instrument, octave, note)
+   * Music: iiiiiiii oooonnnn (instrument, octave, note)
    * Wall:  000000ll llllcccc (letter, color)
    * ```
    * The key `k`: 0 none, 1 to 26 A to Z, 27 to 36 the digits 0 to 9, 37 to 48 F1 to F12, 49 Space,
    * 50 Enter, 51 Tab, 52 Shift, 53 Ctrl, 54 Alt, 55 Backspace, 56 to 59 the arrows up, down, left
    * and right.
    *
+   * The brightness `b` of a light: 0 the usual light, 1 with an extra glow effect.
+   *
    * The color `c`: 0 white, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple, 7 black. White
    * and black are for walls only: a light with 0 stays dark even under a signal.
    *
-   * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
+   * The instrument `i`: every one has a range of octaves of its own. The octave `o`, 0 to 7, is
+   * numbered as in MIDI. The note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
    *
-   * The note `n`: 0 is C and 11 is B. The octave `o`, 0 to 7, is numbered as in MIDI, so 440 Hz is
-   * octave 4, note 9. Every instrument `i` has a range of octaves of its own.
+   * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
    */
   extra: number;
 };
+
+/** The kind of an arrow: 0 for an empty cell, 1 to 43 for the arrows. The type takes any number. */
+declare type ArrowType = number & {};
 
 /**
  * The object passed to always(), onActive(), onStart() and, extended with a count, to
@@ -347,32 +341,35 @@ declare type BlockEvent = {
 /** An arrow of a tool action: the fields of Arrow except the signal, plus its coordinates. */
 declare type PlacedArrow = Position & {
   /** The kind of the arrow, 1 to 43. */
-  type: number;
+  type: ArrowType;
 
   /** Where the arrow points: 0 up, 1 right, 2 down, 3 left. */
-  rotation: number;
+  rotation: Rotation;
 
   /** Whether the arrow is mirrored left to right before the rotation. */
   flip: boolean;
 
   /**
+   * The settings of the arrow packed into one number, 0 to 65535. The arrows that have settings:
    * ```
    * Key:            00kkkkkk (key)
    * Light:          000bcccc (brightness, color)
-   * Music: 000iiiii oooonnnn (instrument, octave, note)
+   * Music: iiiiiiii oooonnnn (instrument, octave, note)
    * Wall:  000000ll llllcccc (letter, color)
    * ```
    * The key `k`: 0 none, 1 to 26 A to Z, 27 to 36 the digits 0 to 9, 37 to 48 F1 to F12, 49 Space,
    * 50 Enter, 51 Tab, 52 Shift, 53 Ctrl, 54 Alt, 55 Backspace, 56 to 59 the arrows up, down, left
    * and right.
    *
+   * The brightness `b` of a light: 0 the usual light, 1 with an extra glow effect.
+   *
    * The color `c`: 0 white, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple, 7 black. White
    * and black are for walls only: a light with 0 stays dark even under a signal.
    *
-   * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
+   * The instrument `i`: every one has a range of octaves of its own. The octave `o`, 0 to 7, is
+   * numbered as in MIDI. The note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
    *
-   * The note `n`: 0 is C and 11 is B. The octave `o`, 0 to 7, is numbered as in MIDI, so 440 Hz is
-   * octave 4, note 9. Every instrument `i` has a range of octaves of its own.
+   * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
    */
   extra: number;
 };
@@ -386,11 +383,37 @@ declare type PlayerMapActionEvent = BlockEvent & {
   count: number;
 };
 
+/** The name of an action the player can be allowed or forbidden with game.setPlayerPermission(). */
+declare type PlayerPermission =
+  | 'setArrows' | 'deleteArrows' | 'deleteArrowsNotInToolbar' | 'rotateArrows' | 'flipArrows'
+  | 'selectArrows' | 'copyArrows' | 'pasteArrows' | 'pickArrows' | 'changeWalls' | 'changeLamps'
+  | 'changeMusicArrows' | 'changeLoggers' | 'changeScriptBlocks' | 'undo' | 'runOneTick'
+  | 'rewindOneTick' | 'pauseSimulation' | 'changeSpeed' | 'clearSignals' | 'useToolbar'
+  | 'toggleToolbarMode' | 'toggleKeyMode' | 'moveCamera' | 'zoomCamera';
+
 /** Coordinates on the map: x grows to the right and y down, and both may be negative. */
 declare type Position = {
   x: number;
   y: number;
 };
+
+/**
+ * Where an arrow points: 0 up, 1 right, 2 down, 3 left. The type takes a plain number too, so
+ * a computed value needs no cast.
+ */
+declare type Rotation = 0 | 1 | 2 | 3 | (number & {});
+
+/**
+ * A signal: 0 none, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple. The type takes a plain
+ * number too, so a computed value needs no cast.
+ */
+declare type Signal = 0 | 1 | 2 | 3 | 4 | 5 | 6 | (number & {});
+
+/**
+ * A position of the speed control of the game: 0 = paused, 1 = 3 ticks per second, 2 = 12, 3 = 60,
+ * 4 = 300, 5 = 1200, 6 = unlimited.
+ */
+declare type Speed = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 /**
  * The player used a tool. The actions and the field that comes with each of them:
@@ -421,7 +444,7 @@ declare type ToolActionEvent = {
     | 'clearSignals' | 'copySelection' | 'deleteSelection' | 'pasteSelection' | 'placeArrows'
     | 'redo' | 'removeArrows' | 'selectArrow' | 'selectionFinalized' | 'toggleToolbarMode'
     | 'undo';
-  id?: number;
+  id?: ArrowType;
   mode?: 'toolbar' | 'inventory';
   arrows?: PlacedArrow[];
   positions?: Position[];
