@@ -1,5 +1,6 @@
 /** The positions of the speed control of the game, for game.setSpeed(). */
 export const Speed = {
+
   /** The simulation is paused. */
   PAUSED: 0,
 
@@ -20,4 +21,5 @@ export const Speed = {
 
   /** As many ticks per second as the computer manages. */
   UNLIMITED: 6,
+
 } as const;

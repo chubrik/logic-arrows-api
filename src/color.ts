@@ -3,30 +3,40 @@
  * a Letter or a Brightness by `|`: Letter.A | Color.RED.
  */
 export const Color = {
+
   /** The bits of the extra that hold the color. */
   MASK: 0x0F,
 
-  /** White; for walls only: a light of this color stays dark even under a signal. */
+  /**
+   *  The white color.
+   * 
+   *  For walls only: a light of this color stays dark even under a signal.
+   */
   WHITE: 0,
 
-  /** Red. */
+  /** The red color. */
   RED: 1,
 
-  /** Blue. */
+  /** The blue color. */
   BLUE: 2,
 
-  /** Yellow. */
+  /** The yellow color. */
   YELLOW: 3,
 
-  /** Green. */
+  /** The green color. */
   GREEN: 4,
 
-  /** Orange. */
+  /** The orange color. */
   ORANGE: 5,
 
-  /** Purple. */
+  /** The purple color. */
   PURPLE: 6,
 
-  /** Black; for walls only. */
+  /**
+   *  The black color.
+   * 
+   *  For walls only.
+   */
   BLACK: 7,
+
 } as const;

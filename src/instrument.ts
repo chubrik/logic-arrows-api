@@ -3,6 +3,7 @@
  * an Octave and a Note by `|`: Instrument.GUITAR | Octave.FIVE | Note.F_SHARP.
  */
 export const Instrument = {
+
   /** The bits of the extra that hold the instrument. */
   MASK: 0xFF00,
 
@@ -74,4 +75,5 @@ export const Instrument = {
 
   /** Saw Wave, instrument 21. */
   SAW_WAVE: 5376,
+
 } as const;

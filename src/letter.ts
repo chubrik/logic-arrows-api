@@ -3,6 +3,7 @@
  * with a Color by `|`: Letter.A | Color.RED.
  */
 export const Letter = {
+
   /** The bits of the extra that hold the letter. */
   MASK: 0x3F0,
 
@@ -119,4 +120,5 @@ export const Letter = {
 
   /** The digit 9. */
   DIGIT_9: 576,
+
 } as const;

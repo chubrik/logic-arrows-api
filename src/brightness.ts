@@ -3,6 +3,7 @@
  * by `|`: Brightness.BRIGHT | Color.RED.
  */
 export const Brightness = {
+
   /** The bits of the extra that hold the brightness. */
   MASK: 0x10,
 
@@ -14,4 +15,5 @@ export const Brightness = {
 
   /** The light with an extra glow effect. */
   BRIGHT: 16,
+
 } as const;

@@ -1,5 +1,6 @@
 /** Where an arrow points, for world.setArrow() and the rotation of an arrow. */
 export const Rotation = {
+
   /** The arrow points up. */
   UP: 0,
 
@@ -11,4 +12,5 @@ export const Rotation = {
 
   /** The arrow points left. */
   LEFT: 3,
+
 } as const;

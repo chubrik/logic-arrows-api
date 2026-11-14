@@ -3,42 +3,44 @@
  * an Instrument and an Octave by `|`: Instrument.GUITAR | Octave.FIVE | Note.F_SHARP.
  */
 export const Note = {
+
   /** The bits of the extra that hold the note. */
   MASK: 0x0F,
 
-  /** C. */
+  /** The C note. */
   C: 0,
 
-  /** C sharp. */
+  /** The C# note. */
   C_SHARP: 1,
 
-  /** D. */
+  /** The D note. */
   D: 2,
 
-  /** D sharp. */
+  /** The D# note. */
   D_SHARP: 3,
 
-  /** E. */
+  /** The E note. */
   E: 4,
 
-  /** F. */
+  /** The F note. */
   F: 5,
 
-  /** F sharp. */
+  /** The F# note. */
   F_SHARP: 6,
 
-  /** G. */
+  /** The G note. */
   G: 7,
 
-  /** G sharp. */
+  /** The G# note. */
   G_SHARP: 8,
 
-  /** A. */
+  /** The A note. */
   A: 9,
 
-  /** A sharp. */
+  /** The A# note. */
   A_SHARP: 10,
 
-  /** B. */
+  /** The B note. */
   B: 11,
+
 } as const;

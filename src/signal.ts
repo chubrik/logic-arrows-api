@@ -1,5 +1,6 @@
 /** The color of a signal, for world.setSignal() and world.getSignal(). */
 export const Signal = {
+
   /** No signal. */
   NONE: 0,
 
@@ -20,4 +21,5 @@ export const Signal = {
 
   /** The purple signal. */
   PURPLE: 6,
+
 } as const;

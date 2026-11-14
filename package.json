@@ -1,6 +1,6 @@
 {
   "name": "logic-arrows-api",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript declarations and constants for the script block API of Logic Arrows",
   "keywords": [
     "logic-arrows",

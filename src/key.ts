@@ -1,5 +1,6 @@
 /** The keys an arrow of the Key type can listen to; the value is the extra of such an arrow. */
 export const Key = {
+
   /** No key. */
   NONE: 0,
 
@@ -179,4 +180,5 @@ export const Key = {
 
   /** The right arrow key. */
   ARROW_RIGHT: 59,
+
 } as const;
