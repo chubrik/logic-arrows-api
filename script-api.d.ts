@@ -5,6 +5,18 @@
  */
 declare function always(callback: (event: BlockEvent) => void): void;
 
+/**
+ * Decode a Base64 string into a string whose every character is one byte, 0 to 255. The padding
+ * with = may be left out; a string that is not Base64 throws an error.
+ */
+declare function atob(data: string): string;
+
+/**
+ * Encode a string as Base64. Every character of it is taken as one byte, so a character above 255
+ * throws an error.
+ */
+declare function btoa(data: string): string;
+
 /** The game around the map: its speed, the camera and what the player is allowed to do. */
 declare const game: {
   /**
@@ -137,6 +149,12 @@ declare function onPlayerToolAction(callback: (event: ToolActionEvent) => void):
 declare function onStart(callback: (event: BlockEvent) => void): void;
 
 /**
+ * The clock of the script block. A block has no timers, neither setTimeout() nor setInterval(),
+ * so this is the way to measure real time.
+ */
+declare var performance: Performance;
+
+/**
  * Display text on screen; without a text it hides the text any block has shown. The next button
  * appears only with onNext and calls it when the player presses it, leaving the text in place.
  * The text takes markup: **bold**, \n for a line break, --- with a space or a line break on both
@@ -242,9 +260,12 @@ declare const world: {
     extra?: number): void;
 
   /**
-   * Set the code of a script block, a Source or a Target; a Message does not take it. The code
-   * starts at once, on the current tick, and onStart does not fire for it, while the previous code
-   * is dropped together with its callbacks.
+   * Set the code of a script block, a Source or a Target; a Message does not take it. The new code
+   * does not run during the call: it starts on the next tick, and only when set from onActive() it
+   * starts on the same tick, before always(). onStart does not fire for it, and the previous code
+   * is dropped together with its callbacks. A block may set its own code too. Setting the code
+   * a block already has does nothing: the block is not restarted, and a space added at the end does
+   * not make the code different.
    */
   setScriptBlockCode(x: number, y: number, code: string): void;
 
@@ -337,6 +358,22 @@ declare type BlockEvent = {
   x: number;
   y: number;
 };
+
+/** The clock of the script block, the type of performance. */
+interface Performance {
+  /**
+   * Milliseconds of real time, with a fraction, counted from the start of the block code. The count
+   * goes on while the game is paused and starts anew when the code of the block is replaced.
+   */
+  now(): number;
+
+  /**
+   * The moment the block code started, in milliseconds of a clock that runs from the start of the
+   * computer, not of the calendar one. It stays the same until the code of the block is replaced,
+   * so timeOrigin + now() is one clock across the starts of the code.
+   */
+  readonly timeOrigin: number;
+}
 
 /** An arrow of a tool action: the fields of Arrow except the signal, plus its coordinates. */
 declare type PlacedArrow = Position & {

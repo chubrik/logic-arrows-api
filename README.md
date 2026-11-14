@@ -53,6 +53,19 @@ onActive(event => {
 });
 ```
 
+The code of a block does not run in a browser. The language itself is there up to ES2025, but
+`document`, `console`, `setTimeout`, `fetch` and the like are not. Tell the editor so with `lib`,
+and it will stop offering them:
+
+```json
+{
+  "compilerOptions": {
+    "lib": ["ES2025"],
+    "types": ["logic-arrows-api"]
+  }
+}
+```
+
 ## Constants
 
 The package also gives names to the numbers of the API:
