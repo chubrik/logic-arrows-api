@@ -335,8 +335,9 @@ declare type Arrow = {
    * The color `c`: 0 white, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple, 7 black. White
    * and black are for walls only: a light with 0 stays dark even under a signal.
    *
-   * The instrument `i`: every one has a range of octaves of its own. The octave `o`, 0 to 7, is
-   * numbered as in MIDI. The note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
+   * The instrument `i`: every one has a range of octaves of its own, and an octave outside the
+   * range sounds as the nearest one inside it. The octave `o`, 0 to 7, is numbered as in MIDI. The
+   * note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
    *
    * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
    */
@@ -403,8 +404,9 @@ declare type PlacedArrow = Position & {
    * The color `c`: 0 white, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple, 7 black. White
    * and black are for walls only: a light with 0 stays dark even under a signal.
    *
-   * The instrument `i`: every one has a range of octaves of its own. The octave `o`, 0 to 7, is
-   * numbered as in MIDI. The note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
+   * The instrument `i`: every one has a range of octaves of its own, and an octave outside the
+   * range sounds as the nearest one inside it. The octave `o`, 0 to 7, is numbered as in MIDI. The
+   * note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
    *
    * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
    */
