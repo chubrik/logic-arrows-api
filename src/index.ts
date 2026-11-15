@@ -3,6 +3,7 @@
 export { ArrowType } from './arrow-type.js';
 export { Brightness } from './brightness.js';
 export { Color } from './color.js';
+export { Drum } from './drum.js';
 export { Instrument } from './instrument.js';
 export { Key } from './key.js';
 export { Letter } from './letter.js';

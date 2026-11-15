@@ -21,7 +21,7 @@ export const Instrument = {
   /** Guitar, instrument 2. Octaves 1 to 5. */
   GUITAR: 512,
 
-  /** Drums, instrument 3. The octave does not matter. */
+  /** Drums, instrument 3. Take a Drum instead of a Note; the octave does not matter. */
   DRUMS: 768,
 
   /** Tuba, instrument 4. Octaves 1 to 4. */
