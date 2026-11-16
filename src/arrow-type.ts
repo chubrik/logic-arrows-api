@@ -199,6 +199,11 @@ export const ArrowType = {
    * Source.
    *
    * Activates: On any incoming signal.
+   *
+   * On activation: Sends a signal forwards.
+   *
+   * An arrow of levels. It takes code like a script block: that code usually gives the level its
+   * input, setting a signal on the arrow itself.
    */
   SOURCE: 22,
 
@@ -206,6 +211,9 @@ export const ArrowType = {
    * Target.
    *
    * Activates: On any incoming signal.
+   *
+   * An arrow of levels. It does not pass the signal on. It takes code like a script block: that
+   * code usually counts the progress of the level in onActive().
    */
   TARGET: 23,
 

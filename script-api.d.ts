@@ -183,7 +183,7 @@ declare const world: {
   /**
    * Clear all signals and restart the tick count: the next tick is tick 1. Unlike the reset the
    * player does with the N key, it does not rerun the code of the blocks, keeps state and
-   * globalState and sends no 'clearSignals' tool action.
+   * globalState and sends no 'clearSignals' tool action. The progress of a level goes back to 0.
    */
   clearSignals(): void;
 

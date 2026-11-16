@@ -1,3 +1,4 @@
+/// <reference path="../level-api.d.ts" preserve="true" />
 /// <reference path="../script-api.d.ts" preserve="true" />
 
 export { ArrowType } from './arrow-type.js';
