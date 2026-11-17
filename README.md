@@ -100,8 +100,9 @@ setting is not needed with it.
 
 ## Reference
 
-The API is described in [script-api.d.ts](script-api.d.ts), and the progress of a level in
-[level-api.d.ts](level-api.d.ts). You can read them right here, without installing anything.
+The API is described in [script-api.d.ts](script-api.d.ts), the progress of a level in
+[level-api.d.ts](level-api.d.ts) and the cat in [cat-api.d.ts](cat-api.d.ts). You can read them
+right here, without installing anything.
 
 ## License
 

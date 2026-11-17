@@ -1,3 +1,4 @@
+/// <reference path="../cat-api.d.ts" preserve="true" />
 /// <reference path="../level-api.d.ts" preserve="true" />
 /// <reference path="../script-api.d.ts" preserve="true" />
 
