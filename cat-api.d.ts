@@ -235,4 +235,5 @@ declare type CatTapTarget = { taps?: number; repeatInterval?: number } & (
   | { type: 'screen'; x: number; y: number }
   | { type: 'cell'; x: number; y: number; withinReach?: boolean }
   | { type: 'button'; button: 'toolbarSlot'; slot: 1 | 2 | 3 | 4 | 5 }
+  | { type: 'button'; button: 'toolbarPage'; direction: 'previous' | 'next' }
 );
