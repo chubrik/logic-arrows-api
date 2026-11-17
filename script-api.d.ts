@@ -252,11 +252,11 @@ declare const world: {
 
   /**
    * Set an arrow, or clear the cell with arrowType 0; rotation 0 points up, 1 right, 2 down,
-   * 3 left, and flip mirrors the arrow left to right before the rotation. getArrow() sees the
+   * 3 left, and flipped mirrors the arrow left to right before the rotation. getArrow() sees the
    * change from the next tick on: during this tick it still returns what the cell held before.
    */
   setArrow(
-    x: number, y: number, arrowType: ArrowType, rotation?: Rotation, flip?: boolean,
+    x: number, y: number, arrowType: ArrowType, rotation?: Rotation, flipped?: boolean,
     extra?: number): void;
 
   /**

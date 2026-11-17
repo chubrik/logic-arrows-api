@@ -18,12 +18,21 @@ declare const level: {
   clearProgress(): void;
 
   /**
-   * Add progressPerTick to the progress for every tick from fromTick to toTick, both included.
-   * A tick counts only once: when it has been confirmed before, it adds nothing, whatever the new
-   * value is. Neither does a tick before the last clearProgress() call; the tick of that call
-   * itself counts. The ticks must not lie ahead: fromTick <= toTick <= the current tick, or
-   * a RangeError is thrown, and so it is for a negative progressPerTick. getProgress() sees the
-   * change from the next tick on.
+   * Add progress for a span of ticks: progressPerTick for every tick from fromTick to toTick,
+   * both included. It is the way to count progress with "Signal prediction" of the level settings
+   * on: the bar starts to fill as soon as the player has built the right circuit, before the
+   * signal really gets to the Target.
+   *
+   * For that, let the Target confirm a span that reaches back as far as the signal may travel:
+   * level.confirmProgress(Math.max(0, tick - 30), tick, 0.002) in its onActive(). The game runs
+   * the simulation ahead, and a call made there counts for the ticks that have already come.
+   * A span of one tick, (tick, tick), gains nothing from the prediction. Without the prediction
+   * a span is simply added at once when the signal arrives.
+   *
+   * A tick counts only once, however many calls name it, and a tick before the last
+   * clearProgress() call does not count at all. A span that starts below tick 0 or ends after
+   * the current tick throws a RangeError, and so does a negative progressPerTick. getProgress()
+   * sees the change from the next tick on.
    */
   confirmProgress(fromTick: number, toTick: number, progressPerTick: number): void;
 
