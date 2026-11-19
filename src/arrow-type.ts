@@ -1,4 +1,4 @@
-/** The kinds of arrows, for world.setArrow() and the type of an arrow. */
+/** The kinds of arrows, for `world.setArrow()` and the type of an arrow. */
 export const ArrowType = {
 
   /** No arrow: an empty cell. */
@@ -213,7 +213,7 @@ export const ArrowType = {
    * Activates: On any incoming signal.
    *
    * An arrow of levels. It does not pass the signal on. It takes code like a script block: that
-   * code usually counts the progress of the level in onActive().
+   * code usually counts the progress of the level in `onActive()`.
    */
   TARGET: 23,
 

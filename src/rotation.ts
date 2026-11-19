@@ -1,4 +1,4 @@
-/** Where an arrow points, for world.setArrow() and the rotation of an arrow. */
+/** Where an arrow points, for `world.setArrow()` and the rotation of an arrow. */
 export const Rotation = {
 
   /** The arrow points up. */

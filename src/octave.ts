@@ -1,15 +1,15 @@
 /**
- * The octaves of a music arrow, placed where they go in the extra of the arrow. Join one with
- * an Instrument and a Note by `|`: Instrument.GUITAR | Octave.FIVE | Note.F_SHARP. They are
- * numbered as in MIDI, so 440 Hz is Octave.FOUR | Note.A. Every instrument has a range of octaves
+ * The octaves of a music arrow, placed where they go in the `extra` of the arrow. Join one with an
+ * `Instrument` and a `Note` by `|`: `Instrument.GUITAR | Octave.FIVE | Note.F_SHARP`. They are
+ * numbered as in MIDI, so 440 Hz is `Octave.FOUR | Note.A`. Every instrument has a range of octaves
  * of its own.
  */
 export const Octave = {
 
-  /** The bits of the extra that hold the octave. */
+  /** The bits of the `extra` that hold the octave. */
   MASK: 0xF0,
 
-  /** How many bits the octave is shifted by in the extra. */
+  /** How many bits the octave is shifted by in the `extra`. */
   SHIFT: 4,
 
   /** Octave 0: the sub-contra octave. */

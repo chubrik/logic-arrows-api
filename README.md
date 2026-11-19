@@ -24,7 +24,7 @@ npm install --save-dev logic-arrows-api
 
 ## Use
 
-The API of a script block is global: `world`, `game`, `always`, `onActive` and the others are
+The API of a script block is global: `world`, `game`, `always()`, `onActive()` and the others are
 available without an import. Add the package to the `types` of your `tsconfig.json`, or of your
 `jsconfig.json` if you write plain JavaScript:
 
@@ -54,8 +54,8 @@ onActive(event => {
 ```
 
 The code of a block does not run in a browser. The language itself is there up to ES2025, but
-`document`, `console`, `setTimeout`, `fetch` and the like are not. Tell the editor so with `lib`,
-and it will stop offering them:
+`document`, `console`, `setTimeout()`, `fetch()` and the like are not. Tell the editor so with
+`lib`, and it will stop offering them:
 
 ```json
 {

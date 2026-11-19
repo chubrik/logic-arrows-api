@@ -1,15 +1,15 @@
 /**
- * The instruments of a music arrow, placed where they go in the extra of the arrow. Join one with
- * an Octave and a Note by `|`: Instrument.GUITAR | Octave.FIVE | Note.F_SHARP. Every instrument
- * plays a range of octaves of its own, and an octave outside the range sounds as the nearest one
- * inside it.
+ * The instruments of a music arrow, placed where they go in the `extra` of the arrow. Join one with
+ * an `Octave` and a `Note` by `|`: `Instrument.GUITAR | Octave.FIVE | Note.F_SHARP`. Every
+ * instrument plays a range of octaves of its own, and an octave outside the range sounds as the
+ * nearest one inside it.
  */
 export const Instrument = {
 
-  /** The bits of the extra that hold the instrument. */
+  /** The bits of the `extra` that hold the instrument. */
   MASK: 0xFF00,
 
-  /** How many bits the instrument is shifted by in the extra. */
+  /** How many bits the instrument is shifted by in the `extra`. */
   SHIFT: 8,
 
   /** Piano, instrument 0. Octaves 0 to 7. */
@@ -21,7 +21,7 @@ export const Instrument = {
   /** Guitar, instrument 2. Octaves 1 to 5. */
   GUITAR: 512,
 
-  /** Drums, instrument 3. Take a Drum instead of a Note; the octave does not matter. */
+  /** Drums, instrument 3. Take a `Drum` instead of a `Note`; the octave does not matter. */
   DRUMS: 768,
 
   /** Tuba, instrument 4. Octaves 1 to 4. */

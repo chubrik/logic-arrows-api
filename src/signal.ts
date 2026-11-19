@@ -1,4 +1,4 @@
-/** The color of a signal, for world.setSignal() and world.getSignal(). */
+/** The color of a signal, for `world.setSignal()` and `world.getSignal()`. */
 export const Signal = {
 
   /** No signal. */

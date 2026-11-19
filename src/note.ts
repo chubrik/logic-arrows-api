@@ -1,10 +1,10 @@
 /**
- * The notes of an octave, placed where they go in the extra of a music arrow. Join one with
- * an Instrument and an Octave by `|`: Instrument.GUITAR | Octave.FIVE | Note.F_SHARP.
+ * The notes of an octave, placed where they go in the `extra` of a music arrow. Join one with an
+ * `Instrument` and an `Octave` by `|`: `Instrument.GUITAR | Octave.FIVE | Note.F_SHARP`.
  */
 export const Note = {
 
-  /** The bits of the extra that hold the note. */
+  /** The bits of the `extra` that hold the note. */
   MASK: 0x0F,
 
   /** The C note. */

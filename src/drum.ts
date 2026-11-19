@@ -1,11 +1,11 @@
 /**
- * The sounds of the drums, placed where the note goes in the extra of a music arrow: with
- * Instrument.DRUMS a note picks a sound, not a pitch. Join one with the instrument by `|`:
- * Instrument.DRUMS | Drum.SNARE. The octave does not matter.
+ * The sounds of the drums, placed where the note goes in the `extra` of a music arrow: with
+ * `Instrument.DRUMS` a note picks a sound, not a pitch. Join one with the instrument by `|`:
+ * `Instrument.DRUMS | Drum.SNARE`. The octave does not matter.
  */
 export const Drum = {
 
-  /** The bits of the extra that hold the sound. */
+  /** The bits of the `extra` that hold the sound. */
   MASK: 0x0F,
 
   /** The buzz kick, a bass drum. */
