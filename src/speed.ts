@@ -1,4 +1,4 @@
-/** The positions of the speed control of the game, for `game.setSpeed()`. */
+/** The positions of the speed control of the game, for `game.setSpeed()` and `cat.setSpeed()`. */
 export const Speed = {
 
   /** The simulation is paused. */

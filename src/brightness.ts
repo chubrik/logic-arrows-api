@@ -1,6 +1,6 @@
 /**
- * The brightness of a Light Bulb block or a Light arrow, placed where it goes in the
- * `extra` of the arrow. Join it with a `Color` by `|`: `Brightness.BRIGHT | Color.RED`.
+ * The brightness of a Light Bulb block or a Light arrow, placed where it goes in
+ * {@linkcode Arrow.extra}. Join it with a `Color` by `|`: `Brightness.BRIGHT | Color.RED`.
  */
 export const Brightness = {
 

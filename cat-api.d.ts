@@ -1,7 +1,8 @@
 /**
  * The cat: a character that stands over the map, talks to the player and shows what to do. It works
  * on any map. The cat is hidden until `show()` is called, and a hidden cat does nothing: its
- * actions are rejected.
+ * actions are rejected, and `say()` shows no bubble. Its look can still be set, and the cat appears
+ * with it at the next `show()`.
  *
  * The actions of the cat, the ones that return a promise, take real time, about half a second for
  * a tap and seconds for a walk, and the promise is fulfilled when the cat is done. Only one action
@@ -15,22 +16,29 @@ declare const cat: {
   /** Make the cat adjust its glasses with a paw. */
   adjustGlasses(): void;
 
-  /** Turn the blinking of the cat on or off. With it off the cat still blinks once in a while. */
+  /**
+   * Turn the blinking of the cat on or off; it is on by default. It is the same setting as the
+   * `autoBlink` option of `show()`. With it off the cat still blinks once in a while.
+   */
   autoBlink(enabled: boolean): void;
 
   /** Make the cat blink once. */
   blink(): void;
 
-  /** Turn the breathing of the cat on or off: with it on the cat sways a little up and down. */
+  /**
+   * Turn the breathing of the cat on or off: with it on the cat sways a little up and down. It is
+   * on by default.
+   */
   breathe(enabled: boolean): void;
 
   /** Stop the taps the cat repeats after a `tap()` with `repeatInterval`. */
   clearAutoTaps(): void;
 
   /**
-   * Make the cat bring the cells between `(x0, y0)` and `(x1, y1)` into view: it changes the scale
-   * with two paws and then drags the map there, pull by pull, which may take a long time. The
-   * player can move the map meanwhile, and the cat keeps dragging it to the goal.
+   * Make the cat bring the cells from `(x0, y0)` up to, but not including, `(x1, y1)` into view,
+   * the same area as for `game.focusCamera()`: it changes the scale with two paws and then drags
+   * the map there, pull by pull, which may take a long time. The player can move the map meanwhile,
+   * and the cat keeps dragging it to the goal.
    */
   focusMap(x0: number, y0: number, x1: number, y1: number): Promise<void>;
 
@@ -45,11 +53,15 @@ declare const cat: {
 
   /**
    * Make the cat look at a point of the screen or at a place of the toolbar, with the eyes alone;
-   * without a target the cat looks straight ahead again.
+   * without a target the cat looks straight ahead again. The targets are listed at
+   * {@linkcode CatLookTarget}.
    */
   look(target?: CatLookTarget): void;
 
-  /** Turn the looking around on or off: with it on the cat turns to one side and another. */
+  /**
+   * Turn the looking around on or off: with it on the cat turns to one side and another. It is off
+   * by default.
+   */
   lookAround(enabled: boolean): void;
 
   /**
@@ -67,21 +79,24 @@ declare const cat: {
   moveTo(x: number, y: number): Promise<void>;
 
   /**
-   * Set how wide the eyes of the cat are open, from 0 for closed to 1 for wide open; 0.5, the
-   * default, is their usual look. The value stays until another one is set.
+   * Set how wide the eyes of the cat are open, from 0 for closed to 1 for wide open; a value
+   * outside this range throws a `RangeError`. Without a value it is 0.5, their usual look. The
+   * value stays until another one is set.
    */
   openEyes(openness?: number): void;
 
   /**
    * Make the cat press the cell `(x, y)` with a paw. A Directional Button arrow there sends its
    * signal; any other arrow is just slapped. With `withinReach` the cat first drags the map to
-   * bring the cell within reach.
+   * bring the cell within reach; without it the paw stretches off the screen to a cell that is out
+   * of view.
    */
   pressButton(x: number, y: number, options?: { withinReach?: boolean }): Promise<void>;
 
   /**
    * Make the cat remove the arrow from the cell `(x, y)`; an empty cell is not an error.
-   * `world.getArrow()` sees the change once the promise is fulfilled.
+   * `world.getArrow()` sees the change once the promise is fulfilled. The options are listed at
+   * {@linkcode CatRemoveArrowOptions}.
    */
   removeArrow(x: number, y: number, options?: CatRemoveArrowOptions): Promise<void>;
 
@@ -95,7 +110,8 @@ declare const cat: {
 
   /**
    * Make the cat put an arrow into the cell `(x, y)`. `world.getArrow()` sees it once the promise
-   * is fulfilled, not during the tick of the call.
+   * is fulfilled, not during the tick of the call. The options are listed at
+   * {@linkcode CatSetArrowOptions}.
    */
   setArrow(x: number, y: number, arrowType: ArrowType, options?: CatSetArrowOptions): Promise<void>;
 
@@ -119,7 +135,7 @@ declare const cat: {
 
   /**
    * Show the cat. An option that is left out keeps the value it had before, even after `hide()` and
-   * after the script is replaced.
+   * after the script is replaced. The options are listed at {@linkcode CatShowOptions}.
    */
   show(options?: CatShowOptions): void;
 
@@ -127,13 +143,13 @@ declare const cat: {
    * Make the cat tap with a paw: at a point of the screen, at a cell of the map or at the toolbar.
    * A tap is a gesture: it presses nothing and selects nothing. A tap at a cell fires `onCatTap()`.
    * With `repeatInterval` the cat repeats the tap until `clearAutoTaps()` is called, and no promise
-   * is returned.
+   * is returned. The targets are listed at {@linkcode CatTapTarget}.
    */
   tap(target: CatTapTarget): Promise<void> | undefined;
 
   /**
-   * Turn the thinking of the cat on or off: with it on the cat bows the head a little, its eyes
-   * get round and a busy sign spins on its forehead.
+   * Turn the thinking of the cat on or off: with it on the cat bows the head a little, its eyes get
+   * round and a busy sign spins on its forehead. It is off by default.
    */
   think(enabled: boolean): void;
 
@@ -160,8 +176,9 @@ declare type CatEyes = 'default' | 'round' | 'cute';
  *   left corner to (1, 1) in the bottom right one;
  * - `'button'` with `'toolbarSlot'` and `slot`: a place in the current row of the toolbar, 1 to 5;
  * - `'button'` with `'toolbarPage'` and `direction`: the row of the toolbar before or after the
- *   current one. With the toolbar folded it is the button that turns the rows, and with all the
- *   rows shown, the label of that row, like F4 or F6.
+ *   current one. In the `'toolbar'` view, which shows one row, it is the button that turns the
+ *   rows; in the `'inventory'` view, which shows them all, it is the label of that row, like F4
+ *   or F6.
  */
 declare type CatLookTarget =
   | { type: 'screen'; x: number; y: number }
@@ -176,7 +193,10 @@ declare type CatRemoveArrowOptions = {
   /** Scatter particles from the removed arrow; `false` by default. */
   particles?: boolean;
 
-  /** Let the cat first drag the map to bring the cell within reach; `false` by default. */
+  /**
+   * Let the cat first drag the map to bring the cell within reach; `false` by default. Without it
+   * the paw stretches off the screen to a cell that is out of view.
+   */
   withinReach?: boolean;
 };
 
@@ -209,14 +229,14 @@ declare type CatShowOptions = {
   /**
    * Whether the cat acts on its own: now and then it follows the pointer with its eyes, turns after
    * it, adjusts its glasses, and now and then it stands still. After the option is turned on it may
-   * take the cat some seconds to stir.
+   * take the cat some seconds to stir. `true` until it is set otherwise.
    */
   autoActions?: boolean;
 
-  /** Whether the cat blinks by itself. */
+  /** Whether the cat blinks by itself; `true` until it is set otherwise. */
   autoBlink?: boolean;
 
-  /** The shape of the eyes. */
+  /** The shape of the eyes; `'default'` unless another one is set. */
   eyes?: CatEyes;
 };
 
@@ -229,11 +249,13 @@ declare type CatShowOptions = {
  *   out of view;
  * - `'button'` with `'toolbarSlot'` and `slot`: a place in the current row of the toolbar, 1 to 5;
  * - `'button'` with `'toolbarPage'` and `direction`: the row of the toolbar before or after the
- *   current one. With the toolbar folded it is the button that turns the rows, and with all the
- *   rows shown, the label of that row, like F4 or F6.
+ *   current one. In the `'toolbar'` view, which shows one row, it is the button that turns the
+ *   rows; in the `'inventory'` view, which shows them all, it is the label of that row, like F4
+ *   or F6.
  *
- * `taps` is how many times the cat taps in a row, 1 to 32, 1 by default. `repeatInterval` makes the
- * cat repeat the tap again and again, with that many seconds between the taps.
+ * `taps` is how many times the cat taps in a row, 1 to 32, 1 by default; any other number throws
+ * a `RangeError`. `repeatInterval` makes the cat repeat the tap again and again, with that many
+ * seconds between the taps.
  */
 declare type CatTapTarget = { repeatInterval?: number; taps?: number } & (
   | { type: 'screen'; x: number; y: number }

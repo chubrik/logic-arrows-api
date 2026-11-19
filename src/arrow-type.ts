@@ -1,4 +1,7 @@
-/** The types of arrows and blocks, for `world.setArrow()` and the type of an arrow. */
+/**
+ * The types of arrows and blocks, for `world.setArrow()`, `cat.setArrow()`,
+ * `game.setToolbarArrow()` and the `type` of an arrow.
+ */
 export const ArrowType = {
 
   /** No arrow: an empty cell. */

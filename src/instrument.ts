@@ -1,5 +1,5 @@
 /**
- * The instruments of a Music block, placed where they go in the `extra` of the arrow. Join one with
+ * The instruments of a Music block, placed where they go in {@linkcode Arrow.extra}. Join one with
  * an `Octave` and a `Note` by `|`: `Instrument.GUITAR | Octave.FIVE | Note.F_SHARP`. Every
  * instrument plays a range of octaves of its own, and an octave outside the range sounds as the
  * nearest one inside it.

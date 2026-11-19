@@ -1,4 +1,4 @@
-/** The keys a Key arrow can listen to; the value is the `extra` of such an arrow. */
+/** The keys a Key arrow can listen to; the value is {@linkcode Arrow.extra} of such an arrow. */
 export const Key = {
 
   /** No key. */

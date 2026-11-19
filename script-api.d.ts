@@ -1,7 +1,8 @@
 /**
- * Fires on every tick, even if the Script block is not activated. When the player steps the
- * simulation back (Shift+Enter while paused) and then runs it forward, it fires again for the ticks
- * that are run anew. Only one callback is kept: a second call replaces the previous one.
+ * Fires on every tick, even if the Script block is not activated; the callback gets
+ * a {@linkcode BlockEvent}. When the player steps the simulation back (Shift+Enter while paused)
+ * and then runs it forward, it fires again for the ticks that are run anew. Only one callback is
+ * kept: a second call replaces the previous one.
  *
  * In a level the same goes for the Source arrow and the Target block.
  */
@@ -9,13 +10,13 @@ declare function always(callback: (event: BlockEvent) => void): void;
 
 /**
  * Decode a Base64 string into a string whose every character is one byte, 0 to 255. The padding
- * with `=` may be left out; a string that is not Base64 throws an error.
+ * with `=` may be left out; a string that is not Base64 throws a `DOMException`.
  */
 declare function atob(data: string): string;
 
 /**
- * Encode a string as Base64. Every character of it is taken as one byte, so a character above 255
- * throws an error.
+ * Encode a string as Base64. Every character of it is taken as one byte, so a character above
+ * 255 throws a `DOMException`.
  */
 declare function btoa(data: string): string;
 
@@ -24,8 +25,8 @@ declare const game: {
   /**
    * Fit the cells from `(x0, y0)` up to, but not including, `(x1, y1)` on the screen: the camera
    * moves to their center and takes the scale at which they reach the edges of the screen, within
-   * the limits of the scale. An area without a positive width and height throws a `RangeError`. The
-   * camera glides for about a second of real time at any game speed, even while paused, and the
+   * the limits of the scale. An area whose width or height is not positive throws a `RangeError`.
+   * The camera glides for about a second of real time at any game speed, even while paused, and the
    * player cannot act meanwhile; then the promise is fulfilled. Another camera call made before
    * that cancels the glide, and the promise is rejected with an `Error`.
    */
@@ -41,15 +42,19 @@ declare const game: {
   moveCamera(x: number, y: number): Promise<void>;
 
   /**
-   * Switch the map into the key mode: an arrow that is sensitive to a key gets activated while the
-   * player holds that key, so a script can read the keyboard through `world.getSignal()`.
+   * Turn the key mode of the map on or off, the one the player switches with the "Key Mode" button:
+   * in it a Key arrow is activated while the player holds its key, so a script can read the
+   * keyboard through `world.getSignal()`. The mode is off when the map loads. The setting survives
+   * a reset of all signals (the N key), but not a reload of the map.
    */
   setKeyMode(active: boolean): void;
 
   /**
-   * Allow or forbid the player an action, by the name of the permission; an unknown name throws
-   * a `RangeError`. A permission binds the player alone: with `'moveCamera'` or `'zoomCamera'`
-   * forbidden, the camera calls of a script still work.
+   * Allow or forbid the player an action, by the name of the permission, one of
+   * {@linkcode PlayerPermission}; an unknown name throws a `RangeError`. A permission binds the
+   * player alone: with `'moveCamera'` or `'zoomCamera'` forbidden, the camera calls of a script
+   * still work. The setting survives a reset of all signals (the N key), but not a reload of
+   * the map.
    */
   setPlayerPermission(name: PlayerPermission, enabled: boolean): void;
 
@@ -97,10 +102,11 @@ declare function getPosition(): Position;
 declare function getTick(): number;
 
 /**
- * The state shared by all scripts; it lives in memory only and is gone after a map reload or
- * a reset of all signals (the N key). When the player steps the simulation back (Shift+Enter while
- * paused), it is rewound together with the map, unlike the variables of the script. It is a proxy
- * over JSON: reading a property parses the stored string, writing serializes the value. Therefore:
+ * The state shared by all scripts. It lives in memory only: it is gone after a map reload or
+ * a reset of all signals (the N key), but it stays when a script is replaced. When the player steps
+ * the simulation back (Shift+Enter while paused), it is rewound together with the map, unlike the
+ * variables of the script. It is a proxy over JSON: reading a property parses the stored string,
+ * writing serializes the value. Therefore:
  * - a typed array arrives as a plain object, a `Date` as a string, `NaN` as `null`, and a function
  *   or a `BigInt` as `undefined`;
  * - changing a value in place does nothing, only an assignment stores it;
@@ -119,14 +125,16 @@ declare function loadText(key?: string): string;
 /**
  * Print a line to the output of the script, which is shown in the editor of its block; the values
  * are serialized with `JSON.stringify()` and joined with spaces. A value that cannot be serialized
- * is printed as `"[unserializable]"`. When the player steps the simulation back (Shift+Enter while
+ * is printed as `[unserializable]`. When the player steps the simulation back (Shift+Enter while
  * paused), the lines of the ticks that are undone disappear from the output.
  */
 declare function log(...values: any[]): void;
 
 /**
- * Fires on every tick while a signal activates the Script block. Only one callback is kept:
- * a second call replaces the previous one.
+ * Fires on every tick while a signal activates the Script block, before `always()` on that tick;
+ * the callback gets a {@linkcode BlockEvent}. When the player steps the simulation back
+ * (Shift+Enter while paused) and then runs it forward, it fires again for the ticks that are run
+ * anew. Only one callback is kept: a second call replaces the previous one.
  *
  * In a level the same goes for the Source arrow and the Target block.
  */
@@ -135,28 +143,32 @@ declare function onActive(callback: (event: BlockEvent) => void): void;
 /**
  * Fires when the player edits the map: places, removes, rotates or flips arrows, changes their
  * settings, pastes, undoes or redoes. It comes one tick after the edit; selecting arrows is not an
- * edit. Only one callback is kept: a second call replaces the previous one.
+ * edit. The edits made while the game is paused arrive as one event on the first tick after the
+ * pause. The callback gets a {@linkcode PlayerMapActionEvent}. Only one callback is kept: a second
+ * call replaces the previous one.
  */
 declare function onPlayerMapAction(callback: (event: PlayerMapActionEvent) => void): void;
 
 /**
  * Fires while the player moves the pointer; `x` and `y` are fractions of the screen, from (0, 0) in
  * its top left corner to (1, 1) in the bottom right one, and several events may arrive within one
- * tick. Only one callback is kept: a second call replaces the previous one.
+ * tick. It fires while the game is paused too. Only one callback is kept: a second call replaces
+ * the previous one.
  */
 declare function onPlayerMouseMove(callback: (x: number, y: number) => void): void;
 
 /**
- * Fires when the player uses a tool. While the game is paused the events are held back, and all of
- * them arrive on the first tick after the pause. Only one callback is kept: a second call replaces
- * the previous one.
+ * Fires when the player uses a tool; the callback gets a {@linkcode ToolActionEvent}, which lists
+ * the tools. While the game is paused the events are held back, and all of them arrive on the first
+ * tick after the pause. Only one callback is kept: a second call replaces the previous one.
  */
 declare function onPlayerToolAction(callback: (event: ToolActionEvent) => void): void;
 
 /**
- * Fires once while the map loads, at tick 0, before the `always()` callback first runs. The script
- * of a block pasted onto a running map starts without it, and so does a script rerun by a reset of
- * all signals (the N key). Only one callback is kept: a second call replaces the previous one.
+ * Fires once while the map loads, at tick 0, before the `always()` callback first runs; the
+ * callback gets a {@linkcode BlockEvent}. The script of a block pasted onto a running map starts
+ * without it, and so does a script rerun by a reset of all signals (the N key). Only one callback
+ * is kept: a second call replaces the previous one.
  */
 declare function onStart(callback: (event: BlockEvent) => void): void;
 
@@ -204,29 +216,35 @@ declare const world: {
 
   /**
    * Copy an arrow from coordinates `(xSrc, ySrc)` to coordinates `(xDst, yDst)`; an empty source
-   * cell clears the destination. `getArrow()` sees the change from the next tick on.
+   * cell clears the destination. The signal of the arrow is not copied. `getArrow()` sees the
+   * change from the next tick on.
    */
   copy(xSrc: number, ySrc: number, xDst: number, yDst: number): void;
 
   /**
    * Copy a region of arrows from `(xSrc0, ySrc0)` to `(xSrc1, ySrc1)`, both corners included and
-   * given in any order; its top left cell lands at `(xDst, yDst)`. The source and the destination
-   * may overlap: the region is copied as it was before the call. `getArrow()` sees the change from
-   * the next tick on.
+   * given in any order; its top left cell lands at `(xDst, yDst)`, and an empty source cell clears
+   * its destination. The signals of the arrows are not copied. The source and the destination may
+   * overlap: the region is copied as it was before the call. `getArrow()` sees the change from the
+   * next tick on.
    */
   copyRegion(
     xSrc0: number, ySrc0: number, xSrc1: number, ySrc1: number, xDst: number, yDst: number): void;
 
   /**
    * Copy a region of arrows with signals from `(xSrc0, ySrc0)` to `(xSrc1, ySrc1)`, both corners
-   * included and given in any order; its top left cell lands at `(xDst, yDst)`, and the copied
-   * signals keep travelling in the copy. The source and the destination may overlap: the region is
-   * copied as it was before the call. `getArrow()` sees the change from the next tick on.
+   * included and given in any order; its top left cell lands at `(xDst, yDst)`, the copied signals
+   * keep travelling in the copy, and an empty source cell clears its destination. The source and
+   * the destination may overlap: the region is copied as it was before the call. `getArrow()` sees
+   * the change from the next tick on.
    */
   copyRegionWithSignals(
     xSrc0: number, ySrc0: number, xSrc1: number, ySrc1: number, xDst: number, yDst: number): void;
 
-  /** Read an arrow; `null` where there is none, in an empty cell or beyond the existing chunks. */
+  /**
+   * Read an arrow as an {@linkcode Arrow}; `null` where there is none, in an empty cell or beyond
+   * the existing chunks.
+   */
   getArrow(x: number, y: number): Arrow | null;
 
   /**
@@ -274,20 +292,22 @@ declare const world: {
 
   /**
    * Set an arrow, or clear the cell with `arrowType` 0; `rotation` 0 points up, 1 right, 2 down,
-   * 3 left, and `flipped` mirrors the arrow left to right before the rotation. `getArrow()` sees
-   * the change from the next tick on: during this tick it still returns what the cell held before.
+   * 3 left, and `flipped` mirrors the arrow left to right before the rotation. `extra` holds the
+   * settings of the arrow, see {@linkcode Arrow.extra}. Left out, `rotation` is 0, `flipped` is
+   * `false` and `extra` is 0. `getArrow()` sees the change from the next tick on: during this tick
+   * it still returns what the cell held before.
    */
   setArrow(
     x: number, y: number, arrowType: ArrowType, rotation?: Rotation, flipped?: boolean,
     extra?: number): void;
 
   /**
-   * Set the code of a Script block, a Source arrow or a Target block; a Message block does not take
-   * it. The new code does not run during the call: it starts on the next tick, or, when set from
-   * `onActive()`, on the same tick, before `always()`. `onStart()` does not fire for it, and the
-   * previous code is dropped together with its callbacks. A block may set its own code too. Setting
-   * the code a block already has does nothing: the block is not restarted, and a space added at the
-   * end does not make the code different.
+   * Set the code of a Script block, a Source arrow or a Target block; on any other cell the call
+   * does nothing. The new code does not run during the call: it starts on the next tick, or, when
+   * set from `onActive()`, on the same tick, before `always()`. `onStart()` does not fire for it,
+   * and the previous code is dropped together with its callbacks. A block may set its own code too.
+   * Setting the code a block already has does nothing: the block is not restarted, and a space
+   * added at the end does not make the code different.
    */
   setScriptBlockCode(x: number, y: number, code: string): void;
 
@@ -327,27 +347,17 @@ declare const world: {
 /** An arrow on the map, the way `world.getArrow()` returns it. */
 declare type Arrow = {
   /**
-   * The settings of the arrow packed into one number, 0 to 65535. The arrows that have settings:
+   * The settings of the arrow packed into one number, 0 to 65535. The arrows and blocks that keep
+   * their settings in it:
    * ```
-   * Key:            00kkkkkk (key)
-   * Light:          000bcccc (brightness, color)
-   * Music: iiiiiiii oooonnnn (instrument, octave, note)
-   * Wall:  000000ll llllcccc (letter, color)
+   * Key:            00kkkkkk  = Key
+   * Light:          000bcccc  = (Brightness | Color)
+   * Music: iiiiiiii oooonnnn  = (Instrument | Octave | Note) or (Instrument.DRUMS | Drum)
+   * Wall:  000000ll llllcccc  = (Letter | Color)
    * ```
-   * The key `k`: 0 none, 1 to 26 A to Z, 27 to 36 the digits 0 to 9, 37 to 48 F1 to F12, 49 Space,
-   * 50 Enter, 51 Tab, 52 Shift, 53 Ctrl, 54 Alt, 55 Backspace, 56 to 59 the arrows up, down, left
-   * and right.
-   *
-   * The brightness `b` of a light: 0 the usual light, 1 with an extra glow effect.
-   *
-   * The color `c`: 0 white, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple, 7 black. White
-   * and black are for walls only: a light with 0 stays dark even under a signal.
-   *
-   * The instrument `i`: every one has a range of octaves of its own, and an octave outside the
-   * range sounds as the nearest one inside it. The octave `o`, 0 to 7, is numbered as in MIDI. The
-   * note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
-   *
-   * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
+   * The names after `=` are the groups of constants of this package: import them and join them
+   * by `|`, like `Letter.A | Color.RED`. The numbers behind the names are listed in the files of
+   * the groups, in the `src` folder of the package repository.
    */
   extra: number;
 
@@ -385,9 +395,16 @@ declare type ArrowType = number & {};
  * In a level the same goes for the Source arrow and the Target block.
  */
 declare type BlockEvent = {
+  /** The tick the callback is called on, the same number `getTick()` returns. */
   tick: number;
+
+  /** The callback the event is for; `'commandBlockActive'` stands for `onActive()`. */
   type: 'always' | 'commandBlockActive' | 'playerMapAction' | 'start';
+
+  /** The x coordinate of the block that holds the script. */
   x: number;
+
+  /** The y coordinate of the block that holds the script. */
   y: number;
 };
 
@@ -410,27 +427,8 @@ interface Performance {
 /** An arrow of a tool action: the fields of `Arrow` except the `signal`, plus its coordinates. */
 declare type PlacedArrow = Position & {
   /**
-   * The settings of the arrow packed into one number, 0 to 65535. The arrows that have settings:
-   * ```
-   * Key:            00kkkkkk (key)
-   * Light:          000bcccc (brightness, color)
-   * Music: iiiiiiii oooonnnn (instrument, octave, note)
-   * Wall:  000000ll llllcccc (letter, color)
-   * ```
-   * The key `k`: 0 none, 1 to 26 A to Z, 27 to 36 the digits 0 to 9, 37 to 48 F1 to F12, 49 Space,
-   * 50 Enter, 51 Tab, 52 Shift, 53 Ctrl, 54 Alt, 55 Backspace, 56 to 59 the arrows up, down, left
-   * and right.
-   *
-   * The brightness `b` of a light: 0 the usual light, 1 with an extra glow effect.
-   *
-   * The color `c`: 0 white, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple, 7 black. White
-   * and black are for walls only: a light with 0 stays dark even under a signal.
-   *
-   * The instrument `i`: every one has a range of octaves of its own, and an octave outside the
-   * range sounds as the nearest one inside it. The octave `o`, 0 to 7, is numbered as in MIDI. The
-   * note `n`: 0 is C and 11 is B, so 440 Hz is octave 4, note 9.
-   *
-   * The letter `l`: 0 none (space), 1 to 26 A to Z, 27 to 36 the digits 0 to 9.
+   * The settings of the arrow packed into one number, 0 to 65535. The layout of the number is
+   * described at {@linkcode Arrow.extra}.
    */
   extra: number;
 
@@ -458,6 +456,19 @@ declare type PlayerMapActionEvent = BlockEvent & {
 
 /**
  * The name of an action the player can be allowed or forbidden with `game.setPlayerPermission()`.
+ * Most names speak for themselves; some need a comment:
+ * - `'changeLamps'`, `'changeLoggers'`, `'changeMusicArrows'`, `'changeScriptBlocks'`,
+ *   `'changeWalls'`: changing the settings or the code of such an arrow or block;
+ * - `'changeSpeed'`, `'toggleKeyMode'`, `'useToolbar'`: when forbidden, they also remove the speed
+ *   control, the "Key Mode" button and the toolbar from the screen;
+ * - `'clearSignals'`: the reset of all signals (the N key);
+ * - `'deleteArrowsNotInToolbar'`: removing the arrows and blocks the toolbar does not offer, like
+ *   the ones disabled with `game.setToolbarArrow()`;
+ * - `'pickArrows'`: picking an arrow from the map into the hand;
+ * - `'rewindOneTick'`, `'runOneTick'`: a step back (Shift+Enter) and a step forward (Enter) while
+ *   paused;
+ * - `'toggleToolbarMode'`: when forbidden, it also folds the toolbar into the `'toolbar'` view
+ *   until it is allowed again.
  */
 declare type PlayerPermission =
   | 'changeLamps' | 'changeLoggers' | 'changeMusicArrows' | 'changeScriptBlocks' | 'changeSpeed'
@@ -508,8 +519,9 @@ declare type Speed = 0 | 1 | 2 | 3 | 4 | 5 | 6;
  * - `'selectionFinalized'` with `positions`: the arrows inside the rectangle the player has dragged
  *   (the empty cells of it are not reported, and neither are the bounds of the rectangle itself),
  *   all of them when the selection is extended with Shift, and an empty list once it is cleared;
- * - `'toggleToolbarMode'` with `mode`: `'toolbar'` or `'inventory'`, the one the toolbar was
- *   switched to;
+ * - `'toggleToolbarMode'` with `mode`: the view the toolbar was switched to, `'toolbar'` for the
+ *   small one that shows one row of five places or `'inventory'` for the large one with all the
+ *   rows;
  * - `'undo'`, no field.
  *
  * Rotating or flipping an arrow and changing its settings send no tool action, only

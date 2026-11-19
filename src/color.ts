@@ -1,6 +1,7 @@
 /**
- * The colors of Wall blocks, Light Bulb blocks and Light arrows, placed where they go in the
- * `extra` of the arrow. Join one with a `Letter` or a `Brightness` by `|`: `Letter.A | Color.RED`.
+ * The colors of Wall blocks, Light Bulb blocks and Light arrows, placed where they go in
+ * {@linkcode Arrow.extra}. Join one with a `Letter` or a `Brightness` by `|`:
+ * `Letter.A | Color.RED`.
  */
 export const Color = {
 

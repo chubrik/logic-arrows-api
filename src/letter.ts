@@ -1,6 +1,6 @@
 /**
- * The letters and digits a Wall block can show, placed where they go in the
- * `extra` of the arrow. Join one with a `Color` by `|`: `Letter.A | Color.RED`.
+ * The letters and digits a Wall block can show, placed where they go in {@linkcode Arrow.extra}.
+ * Join one with a `Color` by `|`: `Letter.A | Color.RED`.
  */
 export const Letter = {
 

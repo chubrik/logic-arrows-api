@@ -1,8 +1,8 @@
 /**
- * The octaves of a Music block, placed where they go in the `extra` of the arrow. Join one with an
+ * The octaves of a Music block, placed where they go in {@linkcode Arrow.extra}. Join one with an
  * `Instrument` and a `Note` by `|`: `Instrument.GUITAR | Octave.FIVE | Note.F_SHARP`. They are
- * numbered as in MIDI, so 440 Hz is `Octave.FOUR | Note.A`. Every instrument has a range of octaves
- * of its own.
+ * numbered as in scientific pitch notation, so 440 Hz is `Octave.FOUR | Note.A`. Every instrument
+ * has a range of octaves of its own.
  */
 export const Octave = {
 
