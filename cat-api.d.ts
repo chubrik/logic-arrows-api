@@ -5,9 +5,9 @@
  *
  * The actions of the cat, the ones that return a promise, take real time, about half a second for
  * a tap and seconds for a walk, and the promise is fulfilled when the cat is done. Only one action
- * runs at a time: of the actions ordered together one is carried out, and the promises of the
- * others are rejected with an `Error`. So order them one after another, with `await`. The player is
- * not locked meanwhile. What the cat does to the map is not an action of the player: no
+ * runs at a time: of the actions started together only one is carried out, and the promises of the
+ * others are rejected with an `Error`. So start them one after another, with `await`. The player
+ * can still act meanwhile. What the cat does to the map is not an action of the player: no
  * `onPlayerMapAction()` or `onPlayerToolAction()` fires for it, and `game.setPlayerPermission()`
  * does not forbid it.
  */
@@ -29,8 +29,8 @@ declare const cat: {
 
   /**
    * Make the cat bring the cells between `(x0, y0)` and `(x1, y1)` into view: it changes the scale
-   * with two paws and then drags the map there, pull by pull, which may take long. The player can
-   * move the map meanwhile, and the cat keeps dragging it to the goal.
+   * with two paws and then drags the map there, pull by pull, which may take a long time. The
+   * player can move the map meanwhile, and the cat keeps dragging it to the goal.
    */
   focusMap(x0: number, y0: number, x1: number, y1: number): Promise<void>;
 
@@ -45,7 +45,7 @@ declare const cat: {
 
   /**
    * Make the cat look at a point of the screen or at a place of the toolbar, with the eyes alone;
-   * without a target the cat looks straight again.
+   * without a target the cat looks straight ahead again.
    */
   look(target?: CatLookTarget): void;
 
@@ -81,7 +81,7 @@ declare const cat: {
 
   /**
    * Make the cat remove the arrow from the cell `(x, y)`; an empty cell is not an error.
-   * `getArrow()` sees the change once the promise is fulfilled.
+   * `world.getArrow()` sees the change once the promise is fulfilled.
    */
   removeArrow(x: number, y: number, options?: CatRemoveArrowOptions): Promise<void>;
 
@@ -94,8 +94,8 @@ declare const cat: {
   say(text?: string, onNext?: () => void): void;
 
   /**
-   * Make the cat put an arrow into the cell `(x, y)`. `getArrow()` sees it once the promise is
-   * fulfilled, not during the tick of the call.
+   * Make the cat put an arrow into the cell `(x, y)`. `world.getArrow()` sees it once the promise
+   * is fulfilled, not during the tick of the call.
    */
   setArrow(x: number, y: number, arrowType: ArrowType, options?: CatSetArrowOptions): Promise<void>;
 
@@ -110,7 +110,7 @@ declare const cat: {
   setSpeed(level: Speed, options?: { withinReach?: boolean }): Promise<void>;
 
   /**
-   * Turn the cat by an angle in degrees: -35 to 35 sideways, where a positive angle turns it to the
+   * Turn the cat to an angle in degrees: -35 to 35 sideways, where a positive angle turns it to the
    * left side of the screen (mind the sign: it is the opposite of the x axis), and -20 to 20
    * vertically, where a positive angle bows the head down. Any other value throws a `RangeError`.
    * `setTurn(0)` makes the cat face the player again.
@@ -146,7 +146,8 @@ declare const cat: {
 
 /**
  * Fires when the cat taps at a cell of the map with `cat.tap()`; `x` and `y` are the coordinates of
- * that cell. A click of the player on the cat does not fire it.
+ * that cell. A click of the player on the cat does not fire it. Only one callback is kept: a second
+ * call replaces the previous one.
  */
 declare function onCatTap(callback: (x: number, y: number) => void): void;
 
@@ -154,19 +155,20 @@ declare function onCatTap(callback: (x: number, y: number) => void): void;
 declare type CatEyes = 'default' | 'round' | 'cute';
 
 /**
- * What the cat looks at or taps at:
+ * What the cat looks at:
  * - `'screen'` with `x` and `y`: a point of the screen in fractions of it, from (0, 0) in the top
  *   left corner to (1, 1) in the bottom right one;
  * - `'button'` with `'toolbarSlot'` and `slot`: a place in the current row of the toolbar, 1 to 5;
  * - `'button'` with `'toolbarPage'` and `direction`: the row of the toolbar before or after the
- *   current one. With the toolbar folded it is the arrow that turns the rows, and with all the rows
- *   shown, the label of that row, like F4 or F6.
+ *   current one. With the toolbar folded it is the button that turns the rows, and with all the
+ *   rows shown, the label of that row, like F4 or F6.
  */
 declare type CatLookTarget =
   | { type: 'screen'; x: number; y: number }
   | { type: 'button'; button: 'toolbarSlot'; slot: 1 | 2 | 3 | 4 | 5 }
   | { type: 'button'; button: 'toolbarPage'; direction: 'previous' | 'next' };
 
+/** The options of `cat.removeArrow()`. */
 declare type CatRemoveArrowOptions = {
   /** Put the removal into the undo history of the player; `false` by default. */
   addToHistory?: boolean;
@@ -178,6 +180,7 @@ declare type CatRemoveArrowOptions = {
   withinReach?: boolean;
 };
 
+/** The options of `cat.setArrow()`. */
 declare type CatSetArrowOptions = {
   /** Put the arrow into the undo history of the player; `false` by default. */
   addToHistory?: boolean;
@@ -188,24 +191,25 @@ declare type CatSetArrowOptions = {
    */
   extra?: number;
 
-  /** Whether the arrow is mirrored; `false` by default. */
+  /** Whether the arrow is mirrored left to right before the rotation; `false` by default. */
   flipped?: boolean;
 
-  /** 0 = up, 1 = right, 2 = down, 3 = left; 0 by default. */
+  /** Where the arrow points: 0 up, 1 right, 2 down, 3 left; 0 by default. */
   rotation?: Rotation;
 
   /**
    * Let the cat first drag the map to bring the cell within reach; `false` by default. Without it
-   * the cat reaches for a far cell beyond the edge of the screen.
+   * the paw stretches off the screen to a cell that is out of view.
    */
   withinReach?: boolean;
 };
 
+/** The options of `cat.show()`. */
 declare type CatShowOptions = {
   /**
-   * Whether the cat lives by itself: now and then it follows the pointer with its eyes, turns
-   * after it, adjusts its glasses, and now and then it stands still. After the option is turned
-   * on it may take the cat some seconds to stir.
+   * Whether the cat acts on its own: now and then it follows the pointer with its eyes, turns after
+   * it, adjusts its glasses, and now and then it stands still. After the option is turned on it may
+   * take the cat some seconds to stir.
    */
   autoActions?: boolean;
 
@@ -221,12 +225,12 @@ declare type CatShowOptions = {
  * - `'screen'` with `x` and `y`: a point of the screen in fractions of it, from (0, 0) in the top
  *   left corner to (1, 1) in the bottom right one;
  * - `'cell'` with `x` and `y`: a cell of the map; `withinReach` lets the cat first drag the map to
- *   bring the cell within reach, and without it the cat reaches for a far cell beyond the edge of
- *   the screen;
+ *   bring the cell within reach, and without it the paw stretches off the screen to a cell that is
+ *   out of view;
  * - `'button'` with `'toolbarSlot'` and `slot`: a place in the current row of the toolbar, 1 to 5;
  * - `'button'` with `'toolbarPage'` and `direction`: the row of the toolbar before or after the
- *   current one. With the toolbar folded it is the arrow that turns the rows, and with all the rows
- *   shown, the label of that row, like F4 or F6.
+ *   current one. With the toolbar folded it is the button that turns the rows, and with all the
+ *   rows shown, the label of that row, like F4 or F6.
  *
  * `taps` is how many times the cat taps in a row, 1 to 32, 1 by default. `repeatInterval` makes the
  * cat repeat the tap again and again, with that many seconds between the taps.

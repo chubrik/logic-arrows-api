@@ -2,14 +2,14 @@
  * The progress of a level: a number from 0 to 1. The bar at the top of the screen shows it when
  * "Show progress" is on in the settings of the level; the progress is counted either way. When it
  * reaches 1 while the level is played, the level is complete; in the editor of the level it just
- * stays at 1. A step back (Shift+Enter on pause) takes the progress back together with the map. The
- * reset the player does with the N key sets it to 0, and so does `world.clearSignals()`. On an
+ * stays at 1. A step back (Shift+Enter while paused) takes the progress back together with the map.
+ * The reset the player does with the N key sets it to 0, and so does `world.clearSignals()`. On an
  * ordinary map there is no progress: the calls do nothing, and `getProgress()` returns 0.
  */
 declare const level: {
   /**
-   * Add a value to the progress; a negative one takes it away. The result is kept within 0 to 1.
-   * The change acts from the next tick on: during this tick `getProgress()` still returns what the
+   * Add a value to the progress; a negative one subtracts. The result is kept within 0 to 1. The
+   * change acts from the next tick on: during this tick `getProgress()` still returns what the
    * progress was before.
    */
   addProgress(value: number): void;

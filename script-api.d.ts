@@ -1,6 +1,6 @@
 /**
  * Fires on every tick, even if the script block is not activated. When the player steps the
- * simulation back (Shift+Enter on pause) and then runs it forward, it fires again for the ticks
+ * simulation back (Shift+Enter while paused) and then runs it forward, it fires again for the ticks
  * that are run anew. Only one callback is kept: a second call replaces the previous one.
  */
 declare function always(callback: (event: BlockEvent) => void): void;
@@ -20,20 +20,21 @@ declare function btoa(data: string): string;
 /** The game around the map: its speed, the camera and what the player is allowed to do. */
 declare const game: {
   /**
-   * Fit the cells from `(x0, y0)` up to, but not including, `(x1, y1)` into the screen: the camera
+   * Fit the cells from `(x0, y0)` up to, but not including, `(x1, y1)` on the screen: the camera
    * moves to their center and takes the scale at which they reach the edges of the screen, within
    * the limits of the scale. An area without a positive width and height throws a `RangeError`. The
-   * camera glides for about a second of real time at any game speed, even on pause, and the player
-   * cannot act meanwhile; then the promise settles. Another camera call made before that cancels
-   * the glide, and the promise is rejected with an `Error`.
+   * camera glides for about a second of real time at any game speed, even while paused, and the
+   * player cannot act meanwhile; then the promise is fulfilled. Another camera call made before
+   * that cancels the glide, and the promise is rejected with an `Error`.
    */
   focusCamera(x0: number, y0: number, x1: number, y1: number): Promise<void>;
 
   /**
    * Center the camera on the cell `(x, y)`, keeping the scale. The camera glides for about a second
-   * of real time at any game speed, even on pause, and the player cannot act meanwhile; then the
-   * promise settles. Another camera call made before that cancels the glide, and the promise is
-   * rejected with an `Error`; only a `zoomCamera()` of the same tick runs together with it.
+   * of real time at any game speed, even while paused, and the player cannot act meanwhile; then
+   * the promise is fulfilled. Another camera call made before that cancels the glide, and the
+   * promise is rejected with an `Error`; only a `zoomCamera()` of the same tick runs together
+   * with it.
    */
   moveCamera(x: number, y: number): Promise<void>;
 
@@ -60,37 +61,37 @@ declare const game: {
   /**
    * Give the player an arrow or take it away, by its type: 1 to 43, any other number throws
    * a `RangeError`. A disabled arrow leaves the toolbar and the inventory: the player cannot select
-   * it, pick it from the map or paste it, a paste just skips such arrows; if it was selected, the
-   * selection is dropped, with no `'selectArrow'` action. Enabling also brings in the arrows the
-   * game does not offer by itself, like Source, Target, Projectile and Flash. The setting survives
-   * a reset of all signals (the N key), but not a reload of the map.
+   * it, pick it from the map or paste it, a paste just skips such arrows; if it was selected, it is
+   * deselected, with no `'selectArrow'` action. Enabling also brings in the arrows the game does
+   * not offer on its own, like Source, Target, Projectile and Flash. The setting survives a reset
+   * of all signals (the N key), but not a reload of the map.
    */
   setToolbarArrow(id: ArrowType, enabled: boolean): void;
 
   /**
    * Set the camera scale, the size of a cell in pixels, keeping the center of the screen: 2 to 128,
    * any other number throws a `RangeError`. The camera glides for about a second of real time at
-   * any game speed, even on pause, and the player cannot act meanwhile; then the promise settles.
-   * Another camera call made before that cancels the glide, and the promise is rejected with an
-   * `Error`; only a `moveCamera()` of the same tick runs together with it.
+   * any game speed, even while paused, and the player cannot act meanwhile; then the promise is
+   * fulfilled. Another camera call made before that cancels the glide, and the promise is rejected
+   * with an `Error`; only a `moveCamera()` of the same tick runs together with it.
    */
   zoomCamera(scale: number): Promise<void>;
 };
 
-/** Script block coordinates; the block has them even before the first tick. */
+/** The coordinates of the script block; the block has them even before the first tick. */
 declare function getPosition(): Position;
 
 /**
- * Current tick count: 0 while the map loads, 1 inside the first `always()` call. The count restarts
- * from 1 after `world.clearSignals()` and after the reset of all signals by the player (the N key),
- * which also reruns the block code.
+ * The current tick count: 0 while the map loads, 1 when the `always()` callback runs for the first
+ * time. The count restarts from 1 after `world.clearSignals()` and after the reset of all signals
+ * by the player (the N key), which also reruns the block code.
  */
 declare function getTick(): number;
 
 /**
- * Shared state between script blocks; it lives in memory only and is gone after a map reload or
- * a reset of all signals (the N key). When the player steps the simulation back (Shift+Enter on
- * pause), it is rewound together with the map, unlike the variables of the code. It is a proxy
+ * The state shared by all script blocks; it lives in memory only and is gone after a map reload or
+ * a reset of all signals (the N key). When the player steps the simulation back (Shift+Enter while
+ * paused), it is rewound together with the map, unlike the variables of the code. It is a proxy
  * over JSON: reading a property parses the stored string, writing serializes the value. Therefore:
  * - a typed array arrives as a plain object, a `Date` as a string, `NaN` as `null`, and a function
  *   or a `BigInt` as `undefined`;
@@ -102,16 +103,16 @@ declare const globalState: Record<string, any>;
 
 /**
  * Load a text of a built-in level by its key, like `'R1.1'` or `'Latch.task'`, in the language of
- * the game. The texts of the game interface are not given out: such a key comes back unchanged, and
+ * the game. The texts of the game interface are not available: such a key comes back unchanged, and
  * so does an unknown one. The keys are case-sensitive; without a key the result is an empty string.
  */
 declare function loadText(key?: string): string;
 
 /**
  * Print a line to the output of the script block, which is shown in its editor; the values are
- * serialized with `JSON.stringify` and joined with spaces. A value that cannot be serialized is
- * printed as `"[unserializable]"`. When the player steps the simulation back (Shift+Enter on
- * pause), the lines of the ticks that are undone disappear from the output.
+ * serialized with `JSON.stringify()` and joined with spaces. A value that cannot be serialized is
+ * printed as `"[unserializable]"`. When the player steps the simulation back (Shift+Enter while
+ * paused), the lines of the ticks that are undone disappear from the output.
  */
 declare function log(...values: any[]): void;
 
@@ -123,28 +124,29 @@ declare function onActive(callback: (event: BlockEvent) => void): void;
 
 /**
  * Fires when the player edits the map: places, removes, rotates or flips arrows, changes their
- * settings, pastes, undoes or redoes. It comes one tick after the edit; selecting arrows is not
- * an edit.
+ * settings, pastes, undoes or redoes. It comes one tick after the edit; selecting arrows is not an
+ * edit. Only one callback is kept: a second call replaces the previous one.
  */
 declare function onPlayerMapAction(callback: (event: PlayerMapActionEvent) => void): void;
 
 /**
  * Fires while the player moves the pointer; `x` and `y` are fractions of the screen, from (0, 0) in
  * its top left corner to (1, 1) in the bottom right one, and several events may arrive within one
- * tick.
+ * tick. Only one callback is kept: a second call replaces the previous one.
  */
 declare function onPlayerMouseMove(callback: (x: number, y: number) => void): void;
 
 /**
- * Fires when the player uses a tool. While the game is paused the events are held back, and all
- * of them arrive on the first tick after the pause.
+ * Fires when the player uses a tool. While the game is paused the events are held back, and all of
+ * them arrive on the first tick after the pause. Only one callback is kept: a second call replaces
+ * the previous one.
  */
 declare function onPlayerToolAction(callback: (event: ToolActionEvent) => void): void;
 
 /**
- * Fires once while the map loads, at tick 0, before the first `always()` call. The code of a block
- * pasted onto a running map starts without it, and so does the code rerun by a reset of all signals
- * (the N key). Only one callback is kept: a second call replaces the previous one.
+ * Fires once while the map loads, at tick 0, before the `always()` callback first runs. The code of
+ * a block pasted onto a running map starts without it, and so does the code rerun by a reset of all
+ * signals (the N key). Only one callback is kept: a second call replaces the previous one.
  */
 declare function onStart(callback: (event: BlockEvent) => void): void;
 
@@ -155,7 +157,7 @@ declare function onStart(callback: (event: BlockEvent) => void): void;
 declare var performance: Performance;
 
 /**
- * Display text on screen; without a text it hides the text any block has shown. The next button
+ * Display text on screen; without a text it hides the text any block has shown. A "Next" button
  * appears only with `onNext` and calls it when the player presses it, leaving the text in place.
  * The text takes markup: `**bold**`, `\n` for a line break, `---` with a space or a line break on
  * both sides for a horizontal rule, `@N` for the icon of arrow type N followed by its name,
@@ -166,10 +168,10 @@ declare var performance: Performance;
 declare function showText(text?: string, onNext?: () => void): void;
 
 /**
- * State of this script block alone; other blocks do not see it. It lives in memory only: it is gone
- * after a map reload or a reset of all signals (the N key), but it stays when the code of the block
- * is replaced. When the player steps the simulation back (Shift+Enter on pause), it is rewound
- * together with the map, unlike the variables of the code. It is a proxy over JSON: reading
+ * The state of this script block alone; other blocks do not see it. It lives in memory only: it is
+ * gone after a map reload or a reset of all signals (the N key), but it stays when the code of the
+ * block is replaced. When the player steps the simulation back (Shift+Enter while paused), it is
+ * rewound together with the map, unlike the variables of the code. It is a proxy over JSON: reading
  * a property parses the stored string, writing serializes the value. Therefore:
  * - a typed array arrives as a plain object, a `Date` as a string, `NaN` as `null`, and a function
  *   or a `BigInt` as `undefined`;
@@ -196,19 +198,19 @@ declare const world: {
   copy(xSrc: number, ySrc: number, xDst: number, yDst: number): void;
 
   /**
-   * Copy a region of arrows from coordinates `(xSrc0, ySrc0)` - `(xSrc1, ySrc1)`, both corners
-   * included and given in any order; its top left cell lands at `(xDst, yDst)`. The source and the
-   * target may overlap: the region is copied as it was before the call. `getArrow()` sees the
-   * change from the next tick on.
+   * Copy a region of arrows from `(xSrc0, ySrc0)` to `(xSrc1, ySrc1)`, both corners included and
+   * given in any order; its top left cell lands at `(xDst, yDst)`. The source and the destination
+   * may overlap: the region is copied as it was before the call. `getArrow()` sees the change from
+   * the next tick on.
    */
   copyRegion(
     xSrc0: number, ySrc0: number, xSrc1: number, ySrc1: number, xDst: number, yDst: number): void;
 
   /**
-   * Copy a region of arrows with signals from coordinates `(xSrc0, ySrc0)` - `(xSrc1, ySrc1)`, both
-   * corners included and given in any order; its top left cell lands at `(xDst, yDst)`, and the
-   * copied signals keep travelling in the copy. The source and the target may overlap: the region
-   * is copied as it was before the call. `getArrow()` sees the change from the next tick on.
+   * Copy a region of arrows with signals from `(xSrc0, ySrc0)` to `(xSrc1, ySrc1)`, both corners
+   * included and given in any order; its top left cell lands at `(xDst, yDst)`, and the copied
+   * signals keep travelling in the copy. The source and the destination may overlap: the region is
+   * copied as it was before the call. `getArrow()` sees the change from the next tick on.
    */
   copyRegionWithSignals(
     xSrc0: number, ySrc0: number, xSrc1: number, ySrc1: number, xDst: number, yDst: number): void;
@@ -218,12 +220,13 @@ declare const world: {
 
   /**
    * All existing chunks of 16×16 cells, by their coordinates in chunks, not in cells: the chunk
-   * `(x, y)` holds the cells from (16x, 16y) to (16x + 15, 16y + 15). A chunk exists while it holds
-   * an arrow; one that comes into being during a tick is listed from the next tick on.
+   * `(x, y)` holds the cells from `(16 * x, 16 * y)` to `(16 * x + 15, 16 * y + 15)`. A chunk
+   * exists while it holds an arrow; one that comes into being during a tick is listed from the next
+   * tick on.
    */
   getChunks(): Position[];
 
-  /** Script block coordinates; the block has them even before the first tick. */
+  /** The coordinates of the script block; the block has them even before the first tick. */
   getPosition(): Position;
 
   /**
@@ -233,9 +236,9 @@ declare const world: {
   getSignal(x: number, y: number): Signal | null;
 
   /**
-   * Current tick count: 0 while the map loads, 1 inside the first `always()` call. The count
-   * restarts from 1 after `world.clearSignals()` and after the reset of all signals by the player
-   * (the N key), which also reruns the block code.
+   * The current tick count: 0 while the map loads, 1 when the `always()` callback runs for the
+   * first time. The count restarts from 1 after `world.clearSignals()` and after the reset of all
+   * signals by the player (the N key), which also reruns the block code.
    */
   getTick(): number;
 
@@ -264,11 +267,11 @@ declare const world: {
 
   /**
    * Set the code of a script block, a Source or a Target; a Message does not take it. The new code
-   * does not run during the call: it starts on the next tick, and only when set from `onActive()`
-   * it starts on the same tick, before `always()`. `onStart` does not fire for it, and the previous
-   * code is dropped together with its callbacks. A block may set its own code too. Setting the code
-   * a block already has does nothing: the block is not restarted, and a space added at the end does
-   * not make the code different.
+   * does not run during the call: it starts on the next tick, or, when set from `onActive()`, on
+   * the same tick, before `always()`. `onStart()` does not fire for it, and the previous code is
+   * dropped together with its callbacks. A block may set its own code too. Setting the code a block
+   * already has does nothing: the block is not restarted, and a space added at the end does not
+   * make the code different.
    */
   setScriptBlockCode(x: number, y: number, code: string): void;
 
@@ -276,7 +279,8 @@ declare const world: {
    * Set a signal: 0 none, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple; an empty cell is
    * ignored. The signal acts once this tick is over and is passed on at once, so `getSignal()` does
    * not show it on the cell itself: on the next tick it is already on the arrows that cell feeds.
-   * A signal of a color that is not the arrow's own is not passed on.
+   * A signal of a color the arrow does not send itself, like blue on a plain arrow, is not
+   * passed on.
    */
   setSignal(x: number, y: number, signal: Signal): void;
 
@@ -332,23 +336,29 @@ declare type Arrow = {
    */
   extra: number;
 
-  /** Whether the arrow is mirrored left to right before the rotation. */
+  /**
+   * Whether the arrow is mirrored left to right before the rotation. It is the `flipped` of
+   * `world.setArrow()`.
+   */
   flip: boolean;
 
   /** Where the arrow points: 0 up, 1 right, 2 down, 3 left. */
   rotation: Rotation;
 
   /**
-   * The signal on the arrow, the same value `getSignal(x, y)` returns: 0 none, 1 red, 2 blue,
+   * The signal on the arrow, the same value `world.getSignal()` returns: 0 none, 1 red, 2 blue,
    * 3 yellow, 4 green, 5 orange, 6 purple.
    */
   signal: Signal;
 
-  /** The kind of the arrow, 1 to 43. */
+  /** The type of the arrow, 1 to 43. */
   type: ArrowType;
 };
 
-/** The kind of an arrow: 0 for an empty cell, 1 to 43 for the arrows. The type takes any number. */
+/**
+ * The type of an arrow: 0 for an empty cell, 1 to 43 for the arrows, some of which the game has not
+ * released yet. As a TypeScript type it takes any number, so a computed value needs no cast.
+ */
 declare type ArrowType = number & {};
 
 /**
@@ -373,9 +383,9 @@ interface Performance {
   now(): number;
 
   /**
-   * The moment the block code started, in milliseconds of a clock that runs from the start of the
-   * computer, not of the calendar one. It stays the same until the code of the block is replaced,
-   * so `timeOrigin + now()` is one clock across the starts of the code.
+   * The moment the block code started, in milliseconds on a clock that counts from the start of the
+   * computer; it is not a calendar time. It stays the same until the code of the block is replaced,
+   * so `timeOrigin + now()` is a clock that does not jump when the code is replaced.
    */
   readonly timeOrigin: number;
 }
@@ -407,13 +417,16 @@ declare type PlacedArrow = Position & {
    */
   extra: number;
 
-  /** Whether the arrow is mirrored left to right before the rotation. */
+  /**
+   * Whether the arrow is mirrored left to right before the rotation. It is the `flipped` of
+   * `world.setArrow()`.
+   */
   flip: boolean;
 
   /** Where the arrow points: 0 up, 1 right, 2 down, 3 left. */
   rotation: Rotation;
 
-  /** The kind of the arrow, 1 to 43. */
+  /** The type of the arrow, 1 to 43. */
   type: ArrowType;
 };
 

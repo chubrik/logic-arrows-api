@@ -83,7 +83,7 @@ onActive(event => {
 
 The groups are `ArrowType`, `Brightness`, `Color`, `Drum`, `Instrument`, `Key`, `Letter`, `Note`,
 `Octave`, `Rotation`, `Signal` and `Speed`. The settings of an arrow are packed into its `extra`
-number, and the constants for them already stand in their places, so they are joined with `|`:
+number, and the constants for them already stand in their places, so they are joined by `|`:
 
 ```js
 import { ArrowType, Color, Instrument, Letter, Note, Octave } from 'logic-arrows-api';

@@ -8,9 +8,9 @@ export const Color = {
   MASK: 0x0F,
 
   /**
-   *  The white color.
-   * 
-   *  For walls only: a light of this color stays dark even under a signal.
+   * The white color.
+   *
+   * Meant for walls: a light of this color stays dark even under a signal.
    */
   WHITE: 0,
 
@@ -33,9 +33,9 @@ export const Color = {
   PURPLE: 6,
 
   /**
-   *  The black color.
-   * 
-   *  For walls only.
+   * The black color.
+   *
+   * Meant for walls.
    */
   BLACK: 7,
 
