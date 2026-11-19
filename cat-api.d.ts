@@ -73,9 +73,9 @@ declare const cat: {
   openEyes(openness?: number): void;
 
   /**
-   * Make the cat press the cell `(x, y)` with a paw. A directional button there sends its signal;
-   * any other arrow is just slapped. With `withinReach` the cat first drags the map to bring the
-   * cell within reach.
+   * Make the cat press the cell `(x, y)` with a paw. A Directional Button arrow there sends its
+   * signal; any other arrow is just slapped. With `withinReach` the cat first drags the map to
+   * bring the cell within reach.
    */
   pressButton(x: number, y: number, options?: { withinReach?: boolean }): Promise<void>;
 
@@ -119,7 +119,7 @@ declare const cat: {
 
   /**
    * Show the cat. An option that is left out keeps the value it had before, even after `hide()` and
-   * after the code of the block is replaced.
+   * after the script is replaced.
    */
   show(options?: CatShowOptions): void;
 

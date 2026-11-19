@@ -1,6 +1,6 @@
 /**
- * The letters and digits a wall can show, placed where they go in the `extra` of the arrow. Join
- * one with a `Color` by `|`: `Letter.A | Color.RED`.
+ * The letters and digits a Wall block can show, placed where they go in the
+ * `extra` of the arrow. Join one with a `Color` by `|`: `Letter.A | Color.RED`.
  */
 export const Letter = {
 
@@ -10,7 +10,7 @@ export const Letter = {
   /** How many bits the letter is shifted by in the `extra`. */
   SHIFT: 4,
 
-  /** No letter: a blank wall. */
+  /** No letter: a blank Wall block. */
   NONE: 0,
 
   /** The letter A. */

@@ -1,11 +1,11 @@
-/** The types of arrows, for `world.setArrow()` and the type of an arrow. */
+/** The types of arrows and blocks, for `world.setArrow()` and the type of an arrow. */
 export const ArrowType = {
 
   /** No arrow: an empty cell. */
   NONE: 0,
 
   /**
-   * Arrow.
+   * Basic red Arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -23,7 +23,7 @@ export const ArrowType = {
   SOURCE_BLOCK: 2,
 
   /**
-   * Blocker.
+   * Blocker arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -41,7 +41,7 @@ export const ArrowType = {
   DELAY_ARROW: 4,
 
   /**
-   * Detector.
+   * Detector arrow.
    *
    * Activates: If the cell behind is active.
    *
@@ -50,7 +50,7 @@ export const ArrowType = {
   DETECTOR: 5,
 
   /**
-   * I-Splitter.
+   * I-Splitter arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -59,7 +59,7 @@ export const ArrowType = {
   I_SPLITTER: 6,
 
   /**
-   * L-Splitter.
+   * L-Splitter arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -68,7 +68,7 @@ export const ArrowType = {
   L_SPLITTER: 7,
 
   /**
-   * T-Splitter.
+   * T-Splitter arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -77,7 +77,7 @@ export const ArrowType = {
   T_SPLITTER: 8,
 
   /**
-   * Pulse generator.
+   * Pulse Generator block.
    *
    * Activates: Red if not active. Blue if the current color is red or blue.
    *
@@ -104,7 +104,7 @@ export const ArrowType = {
   DIAGONAL_ARROW: 11,
 
   /**
-   * Blue I-Splitter.
+   * Blue I-Splitter arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -113,7 +113,7 @@ export const ArrowType = {
   BLUE_I_SPLITTER: 12,
 
   /**
-   * Blue L-Splitter.
+   * Blue L-Splitter arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -122,7 +122,7 @@ export const ArrowType = {
   BLUE_L_SPLITTER: 13,
 
   /**
-   * Diagonal Splitter.
+   * Diagonal Splitter arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -131,7 +131,7 @@ export const ArrowType = {
   DIAGONAL_SPLITTER: 14,
 
   /**
-   * Not gate.
+   * Not Gate arrow.
    *
    * Activates: When there are no incoming signals.
    *
@@ -140,7 +140,7 @@ export const ArrowType = {
   NOT_GATE: 15,
 
   /**
-   * And gate.
+   * And Gate arrow.
    *
    * Activates: On at least two incoming signals.
    *
@@ -149,7 +149,7 @@ export const ArrowType = {
   AND_GATE: 16,
 
   /**
-   * XOR gate.
+   * XOR Gate arrow.
    *
    * Activates: On odd number of incoming signals.
    *
@@ -158,7 +158,7 @@ export const ArrowType = {
   XOR_GATE: 17,
 
   /**
-   * Latch.
+   * Latch arrow.
    *
    * Activates: On at least two incoming signals. Or when there are no incoming signals and already
    * active.
@@ -168,7 +168,7 @@ export const ArrowType = {
   LATCH: 18,
 
   /**
-   * T flip-flop.
+   * T Flip-Flop arrow.
    *
    * Activates: On any incoming signal if not active. Or when there are no incoming signals and
    * already active.
@@ -178,7 +178,7 @@ export const ArrowType = {
   T_FLIP_FLOP: 19,
 
   /**
-   * Randomizer.
+   * Randomizer arrow.
    *
    * Activates: On any incoming signal with 50% chance.
    *
@@ -187,7 +187,7 @@ export const ArrowType = {
   RANDOMIZER: 20,
 
   /**
-   * Key.
+   * Key arrow.
    *
    * Activates: When the selected key is pressed.
    *
@@ -196,29 +196,29 @@ export const ArrowType = {
   KEY: 21,
 
   /**
-   * Source.
+   * Source arrow.
    *
    * Activates: On any incoming signal.
    *
    * On activation: Sends a signal forwards.
    *
-   * An arrow used in levels. It takes code like a script block: that code usually gives the level
+   * An arrow used in levels. It takes code like a Script block: that code usually gives the level
    * its input, setting a signal on the arrow itself.
    */
   SOURCE: 22,
 
   /**
-   * Target.
+   * Target block.
    *
    * Activates: On any incoming signal.
    *
-   * An arrow used in levels. It does not pass the signal on. It takes code like a script block:
+   * A block used in levels. It does not pass the signal on. It takes code like a Script block:
    * that code usually counts the progress of the level in `onActive()`.
    */
   TARGET: 23,
 
   /**
-   * Directional button.
+   * Directional Button arrow.
    *
    * Activates: When pressed with the left mouse button or on any incoming signal.
    *
@@ -227,7 +227,7 @@ export const ArrowType = {
   DIRECTIONAL_BUTTON: 24,
 
   /**
-   * Wall.
+   * Wall block.
    *
    * Activates: Never.
    *
@@ -235,11 +235,11 @@ export const ArrowType = {
    */
   WALL: 25,
 
-  /** Unknown: a question mark that does nothing. */
+  /** Unknown block: a question mark that does nothing. */
   UNKNOWN: 26,
 
   /**
-   * Light bulb.
+   * Light Bulb block.
    *
    * Activates: On any incoming signal.
    *
@@ -248,7 +248,7 @@ export const ArrowType = {
   LIGHT_BULB: 27,
 
   /**
-   * Light bulb that points in a direction.
+   * Light arrow (a bulb that points in a direction).
    *
    * Activates: On any incoming signal.
    *
@@ -257,7 +257,7 @@ export const ArrowType = {
   LIGHT_ARROW: 28,
 
   /**
-   * Music Arrow.
+   * Music block.
    *
    * Activates: On any incoming signal.
    *
@@ -266,7 +266,7 @@ export const ArrowType = {
   MUSIC: 29,
 
   /**
-   * Transmitter.
+   * Transmitter arrow.
    *
    * Activates: On any incoming signal.
    *
@@ -275,7 +275,7 @@ export const ArrowType = {
   TRANSMITTER: 30,
 
   /**
-   * Projectile.
+   * Projectile arrow.
    *
    * Activates: Never.
    *
@@ -294,7 +294,7 @@ export const ArrowType = {
   SCRIPT_BLOCK: 33,
 
   /**
-   * Message.
+   * Message block.
    *
    * Activates: On any incoming signal.
    *
@@ -303,7 +303,7 @@ export const ArrowType = {
   MESSAGE: 34,
 
   /**
-   * Flash.
+   * Flash block.
    *
    * Activates: On appearance. The signal color depends on the colors of the arrows that created
    * this flash.
@@ -313,7 +313,7 @@ export const ArrowType = {
   FLASH: 35,
 
   /**
-   * Logger.
+   * Logger block.
    *
    * Activates: On any incoming signal.
    *
@@ -322,7 +322,7 @@ export const ArrowType = {
   LOGGER: 42,
 
   /**
-   * Interval.
+   * Interval block.
    *
    * Activates: On any incoming signal.
    *

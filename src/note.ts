@@ -1,5 +1,5 @@
 /**
- * The notes of an octave, placed where they go in the `extra` of a music arrow. Join one with an
+ * The notes of an octave, placed where they go in the `extra` of a Music block. Join one with an
  * `Instrument` and an `Octave` by `|`: `Instrument.GUITAR | Octave.FIVE | Note.F_SHARP`.
  */
 export const Note = {

@@ -1,6 +1,6 @@
 /**
- * The colors of walls and lights, placed where they go in the `extra` of the arrow. Join one with
- * a `Letter` or a `Brightness` by `|`: `Letter.A | Color.RED`.
+ * The colors of Wall blocks, Light Bulb blocks and Light arrows, placed where they go in the
+ * `extra` of the arrow. Join one with a `Letter` or a `Brightness` by `|`: `Letter.A | Color.RED`.
  */
 export const Color = {
 
@@ -10,7 +10,8 @@ export const Color = {
   /**
    * The white color.
    *
-   * Meant for walls: a light of this color stays dark even under a signal.
+   * Meant for Wall blocks: a Light Bulb block or a Light arrow of this color stays dark even under
+   * a signal.
    */
   WHITE: 0,
 
@@ -35,7 +36,7 @@ export const Color = {
   /**
    * The black color.
    *
-   * Meant for walls.
+   * Meant for Wall blocks.
    */
   BLACK: 7,
 

@@ -1,7 +1,9 @@
 /**
- * Fires on every tick, even if the script block is not activated. When the player steps the
+ * Fires on every tick, even if the Script block is not activated. When the player steps the
  * simulation back (Shift+Enter while paused) and then runs it forward, it fires again for the ticks
  * that are run anew. Only one callback is kept: a second call replaces the previous one.
+ *
+ * In a level the same goes for the Source arrow and the Target block.
  */
 declare function always(callback: (event: BlockEvent) => void): void;
 
@@ -40,7 +42,7 @@ declare const game: {
 
   /**
    * Switch the map into the key mode: an arrow that is sensitive to a key gets activated while the
-   * player holds that key, so a block can read the keyboard through `world.getSignal()`.
+   * player holds that key, so a script can read the keyboard through `world.getSignal()`.
    */
   setKeyMode(active: boolean): void;
 
@@ -63,8 +65,9 @@ declare const game: {
    * a `RangeError`. A disabled arrow leaves the toolbar and the inventory: the player cannot select
    * it, pick it from the map or paste it, a paste just skips such arrows; if it was selected, it is
    * deselected, with no `'selectArrow'` action. Enabling also brings in the arrows the game does
-   * not offer on its own, like Source, Target, Projectile and Flash. The setting survives a reset
-   * of all signals (the N key), but not a reload of the map.
+   * not offer on its own, like the Source arrow, the Target block, the Projectile arrow and the
+   * Flash block. The setting survives a reset of all signals (the N key), but not a reload of
+   * the map.
    */
   setToolbarArrow(id: ArrowType, enabled: boolean): void;
 
@@ -78,20 +81,25 @@ declare const game: {
   zoomCamera(scale: number): Promise<void>;
 };
 
-/** The coordinates of the script block; the block has them even before the first tick. */
+/**
+ * The coordinates of the Script block that holds the script; the block has them even before the
+ * first tick.
+ *
+ * In a level the same goes for the Source arrow and the Target block.
+ */
 declare function getPosition(): Position;
 
 /**
  * The current tick count: 0 while the map loads, 1 when the `always()` callback runs for the first
  * time. The count restarts from 1 after `world.clearSignals()` and after the reset of all signals
- * by the player (the N key), which also reruns the block code.
+ * by the player (the N key), which also reruns the scripts.
  */
 declare function getTick(): number;
 
 /**
- * The state shared by all script blocks; it lives in memory only and is gone after a map reload or
+ * The state shared by all scripts; it lives in memory only and is gone after a map reload or
  * a reset of all signals (the N key). When the player steps the simulation back (Shift+Enter while
- * paused), it is rewound together with the map, unlike the variables of the code. It is a proxy
+ * paused), it is rewound together with the map, unlike the variables of the script. It is a proxy
  * over JSON: reading a property parses the stored string, writing serializes the value. Therefore:
  * - a typed array arrives as a plain object, a `Date` as a string, `NaN` as `null`, and a function
  *   or a `BigInt` as `undefined`;
@@ -109,16 +117,18 @@ declare const globalState: Record<string, any>;
 declare function loadText(key?: string): string;
 
 /**
- * Print a line to the output of the script block, which is shown in its editor; the values are
- * serialized with `JSON.stringify()` and joined with spaces. A value that cannot be serialized is
- * printed as `"[unserializable]"`. When the player steps the simulation back (Shift+Enter while
+ * Print a line to the output of the script, which is shown in the editor of its block; the values
+ * are serialized with `JSON.stringify()` and joined with spaces. A value that cannot be serialized
+ * is printed as `"[unserializable]"`. When the player steps the simulation back (Shift+Enter while
  * paused), the lines of the ticks that are undone disappear from the output.
  */
 declare function log(...values: any[]): void;
 
 /**
- * Fires on every tick while a signal activates the script block. Only one callback is kept:
+ * Fires on every tick while a signal activates the Script block. Only one callback is kept:
  * a second call replaces the previous one.
+ *
+ * In a level the same goes for the Source arrow and the Target block.
  */
 declare function onActive(callback: (event: BlockEvent) => void): void;
 
@@ -144,20 +154,20 @@ declare function onPlayerMouseMove(callback: (x: number, y: number) => void): vo
 declare function onPlayerToolAction(callback: (event: ToolActionEvent) => void): void;
 
 /**
- * Fires once while the map loads, at tick 0, before the `always()` callback first runs. The code of
- * a block pasted onto a running map starts without it, and so does the code rerun by a reset of all
- * signals (the N key). Only one callback is kept: a second call replaces the previous one.
+ * Fires once while the map loads, at tick 0, before the `always()` callback first runs. The script
+ * of a block pasted onto a running map starts without it, and so does a script rerun by a reset of
+ * all signals (the N key). Only one callback is kept: a second call replaces the previous one.
  */
 declare function onStart(callback: (event: BlockEvent) => void): void;
 
 /**
- * The clock of the script block. A block has no timers, neither `setTimeout()` nor `setInterval()`,
- * so this is the way to measure real time.
+ * The clock of the script. A script has no timers, neither `setTimeout()` nor `setInterval()`, so
+ * this is the way to measure real time.
  */
 declare var performance: Performance;
 
 /**
- * Display text on screen; without a text it hides the text any block has shown. A "Next" button
+ * Display text on screen; without a text it hides the text any script has shown. A "Next" button
  * appears only with `onNext` and calls it when the player presses it, leaving the text in place.
  * The text takes markup: `**bold**`, `\n` for a line break, `---` with a space or a line break on
  * both sides for a horizontal rule, `@N` for the icon of arrow type N followed by its name,
@@ -168,16 +178,18 @@ declare var performance: Performance;
 declare function showText(text?: string, onNext?: () => void): void;
 
 /**
- * The state of this script block alone; other blocks do not see it. It lives in memory only: it is
- * gone after a map reload or a reset of all signals (the N key), but it stays when the code of the
- * block is replaced. When the player steps the simulation back (Shift+Enter while paused), it is
- * rewound together with the map, unlike the variables of the code. It is a proxy over JSON: reading
- * a property parses the stored string, writing serializes the value. Therefore:
+ * The state of this Script block alone; other blocks do not see it. It lives in memory only: it is
+ * gone after a map reload or a reset of all signals (the N key), but it stays when the script of
+ * the block is replaced. When the player steps the simulation back (Shift+Enter while paused), it
+ * is rewound together with the map, unlike the variables of the script. It is a proxy over JSON:
+ * reading a property parses the stored string, writing serializes the value. Therefore:
  * - a typed array arrives as a plain object, a `Date` as a string, `NaN` as `null`, and a function
  *   or a `BigInt` as `undefined`;
  * - changing a value in place does nothing, only an assignment stores it;
  * - every read parses the whole string again and every write serializes the whole value, so keep
  *   a large value in a variable instead of reading it twice.
+ *
+ * In a level the same goes for the Source arrow and the Target block.
  */
 declare const state: Record<string, any>;
 
@@ -185,9 +197,8 @@ declare const state: Record<string, any>;
 declare const world: {
   /**
    * Clear all signals and restart the tick count: the next tick is tick 1. Unlike the reset the
-   * player does with the N key, it does not rerun the code of the blocks, keeps `state` and
-   * `globalState` and sends no `'clearSignals'` tool action. The progress of a level goes back
-   * to 0.
+   * player does with the N key, it does not rerun the scripts, keeps `state` and `globalState` and
+   * sends no `'clearSignals'` tool action. The progress of a level goes back to 0.
    */
   clearSignals(): void;
 
@@ -226,7 +237,12 @@ declare const world: {
    */
   getChunks(): Position[];
 
-  /** The coordinates of the script block; the block has them even before the first tick. */
+  /**
+   * The coordinates of the Script block that holds the script; the block has them even before the
+   * first tick.
+   *
+   * In a level the same goes for the Source arrow and the Target block.
+   */
   getPosition(): Position;
 
   /**
@@ -238,15 +254,15 @@ declare const world: {
   /**
    * The current tick count: 0 while the map loads, 1 when the `always()` callback runs for the
    * first time. The count restarts from 1 after `world.clearSignals()` and after the reset of all
-   * signals by the player (the N key), which also reruns the block code.
+   * signals by the player (the N key), which also reruns the scripts.
    */
   getTick(): number;
 
   /**
-   * Read the number an arrow shows; `null` for a cell that shows none. A logger (type 42) shows how
-   * many signals reach it on this tick, 0 when none does. An interval arrow (type 43) shows how
-   * many ticks passed between the last two signals it received; the number stays until the next
-   * signal, and before the second signal it is `null`.
+   * Read the number an arrow shows; `null` for a cell that shows none. A Logger block (type 42)
+   * shows how many signals reach it on this tick, 0 when none does. An Interval block (type 43)
+   * shows how many ticks passed between the last two signals it received; the number stays until
+   * the next signal, and before the second signal it is `null`.
    */
   getValue(x: number, y: number): number | null;
 
@@ -266,12 +282,12 @@ declare const world: {
     extra?: number): void;
 
   /**
-   * Set the code of a script block, a Source or a Target; a Message does not take it. The new code
-   * does not run during the call: it starts on the next tick, or, when set from `onActive()`, on
-   * the same tick, before `always()`. `onStart()` does not fire for it, and the previous code is
-   * dropped together with its callbacks. A block may set its own code too. Setting the code a block
-   * already has does nothing: the block is not restarted, and a space added at the end does not
-   * make the code different.
+   * Set the code of a Script block, a Source arrow or a Target block; a Message block does not take
+   * it. The new code does not run during the call: it starts on the next tick, or, when set from
+   * `onActive()`, on the same tick, before `always()`. `onStart()` does not fire for it, and the
+   * previous code is dropped together with its callbacks. A block may set its own code too. Setting
+   * the code a block already has does nothing: the block is not restarted, and a space added at the
+   * end does not make the code different.
    */
   setScriptBlockCode(x: number, y: number, code: string): void;
 
@@ -279,8 +295,7 @@ declare const world: {
    * Set a signal: 0 none, 1 red, 2 blue, 3 yellow, 4 green, 5 orange, 6 purple; an empty cell is
    * ignored. The signal acts once this tick is over and is passed on at once, so `getSignal()` does
    * not show it on the cell itself: on the next tick it is already on the arrows that cell feeds.
-   * A signal of a color the arrow does not send itself, like blue on a plain arrow, is not
-   * passed on.
+   * A signal of a color the arrow does not send itself, like blue on a red Arrow, is not passed on.
    */
   setSignal(x: number, y: number, signal: Signal): void;
 
@@ -366,6 +381,8 @@ declare type ArrowType = number & {};
  * `onPlayerMapAction()`; `x` and `y` are the coordinates of the block itself. The `type` names the
  * callback: `'always'`, `'commandBlockActive'` for `onActive()`, `'start'` for `onStart()` and
  * `'playerMapAction'`.
+ *
+ * In a level the same goes for the Source arrow and the Target block.
  */
 declare type BlockEvent = {
   tick: number;
@@ -374,18 +391,18 @@ declare type BlockEvent = {
   y: number;
 };
 
-/** The clock of the script block, the type of `performance`. */
+/** The clock of the script, the type of `performance`. */
 interface Performance {
   /**
-   * Milliseconds of real time, with a fraction, counted from the start of the block code. The count
-   * goes on while the game is paused and starts anew when the code of the block is replaced.
+   * Milliseconds of real time, with a fraction, counted from the start of the script. The count
+   * goes on while the game is paused and starts anew when the script is replaced.
    */
   now(): number;
 
   /**
-   * The moment the block code started, in milliseconds on a clock that counts from the start of the
-   * computer; it is not a calendar time. It stays the same until the code of the block is replaced,
-   * so `timeOrigin + now()` is a clock that does not jump when the code is replaced.
+   * The moment the script started, in milliseconds on a clock that counts from the start of the
+   * computer; it is not a calendar time. It stays the same until the script is replaced, so
+   * `timeOrigin + now()` is a clock that does not jump when the script is replaced.
    */
   readonly timeOrigin: number;
 }

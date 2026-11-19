@@ -7,10 +7,10 @@
 <a href="https://store.steampowered.com/app/4210250/Logic_Arrows/"><img src="img/logic-arrows.jpg"
 alt="Logic Arrows" width="460"></a>
 
-TypeScript declarations for the script block API of
+TypeScript declarations for the script API of
 [Logic Arrows](https://store.steampowered.com/app/4210250/Logic_Arrows/). They give you
-autocompletion, inline documentation and type checking when you write the code of a script block
-in an external editor.
+autocompletion, inline documentation and type checking when you write a script in an external
+editor.
 
 This is an unofficial package, published with the permission of the author of the game. It is an
 early version: everything it describes has been checked in the game, but the API of the game is
@@ -24,8 +24,8 @@ npm install --save-dev logic-arrows-api
 
 ## Use
 
-The API of a script block is global: `world`, `game`, `always()`, `onActive()` and the others are
-available without an import. Add the package to the `types` of your `tsconfig.json`, or of your
+The script API is global: `world`, `game`, `always()`, `onActive()` and the others are available
+without an import. Add the package to the `types` of your `tsconfig.json`, or of your
 `jsconfig.json` if you write plain JavaScript:
 
 ```json
@@ -53,9 +53,9 @@ onActive(event => {
 });
 ```
 
-The code of a block does not run in a browser. The language itself is there up to ES2025, but
-`document`, `console`, `setTimeout()`, `fetch()` and the like are not. Tell the editor so with
-`lib`, and it will stop offering them:
+A script does not run in a browser. The language itself is there up to ES2025, but `document`,
+`console`, `setTimeout()`, `fetch()` and the like are not. Tell the editor so with `lib`, and it
+will stop offering them:
 
 ```json
 {
@@ -94,8 +94,8 @@ world.setArrow(x + 1, y, ArrowType.MUSIC, 0, false, music);
 world.setArrow(x + 2, y, ArrowType.WALL, 0, false, Letter.A | Color.RED);
 ```
 
-The game knows nothing about imports, so the constants are for those who build the code of a block
-with a bundler, like esbuild. Such an import brings the declarations of the API too, and the `types`
+The game knows nothing about imports, so the constants are for those who build a script with a
+bundler, like esbuild. Such an import brings the declarations of the API too, and the `types`
 setting is not needed with it.
 
 ## Reference

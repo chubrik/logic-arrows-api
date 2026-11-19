@@ -1,5 +1,5 @@
 /**
- * The sounds of the drums, placed where the note goes in the `extra` of a music arrow: with
+ * The sounds of the drums, placed where the note goes in the `extra` of a Music block: with
  * `Instrument.DRUMS` a note picks a sound, not a pitch. Join one with the instrument by `|`:
  * `Instrument.DRUMS | Drum.SNARE`. The octave does not matter.
  */
